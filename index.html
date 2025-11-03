@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colegio Anti-Bullying - Plataforma Educativa</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>🛡️ Colegio Anti-Bullying</h1>
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#que-es">¿Qué es?</a></li>
+                <li><a href="#recursos">Recursos</a></li>
+                <li><a href="#ayuda">Ayuda</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="inicio" class="hero">
+            <h2>Juntos contra el Bullying</h2>
+            <p>Una plataforma educativa para crear un ambiente escolar seguro y respetuoso</p>
+            <button id="reportBtn">Reportar Incidente</button>
+        </section>
+
+        <section id="que-es" class="info-section">
+            <h2>¿Qué es el Bullying?</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>🗣️ Verbal</h3>
+                    <p>Insultos, burlas, amenazas o comentarios hirientes repetidos.</p>
+                </div>
+                <div class="card">
+                    <h3>👊 Físico</h3>
+                    <p>Golpes, empujones, o cualquier forma de agresión física.</p>
+                </div>
+                <div class="card">
+                    <h3>💻 Ciberbullying</h3>
+                    <p>Acoso a través de redes sociales, mensajes o medios digitales.</p>
+                </div>
+                <div class="card">
+                    <h3>😔 Social</h3>
+                    <p>Exclusión deliberada, rumores o dañar la reputación de alguien.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="recursos" class="resources">
+            <h2>Recursos Educativos</h2>
+            <ul>
+                <li>📚 Guías para estudiantes sobre cómo enfrentar el bullying</li>
+                <li>👨‍👩‍👧 Materiales para padres y tutores</li>
+                <li>👩‍🏫 Herramientas para educadores</li>
+                <li>🤝 Actividades de prevención y convivencia</li>
+            </ul>
+        </section>
+
+        <section id="ayuda" class="help">
+            <h2>¿Necesitas Ayuda?</h2>
+            <p>Si estás sufriendo bullying o conoces a alguien que lo esté experimentando:</p>
+            <div class="help-actions">
+                <button class="action-btn">Habla con un Adulto de Confianza</button>
+                <button class="action-btn">Contacta al Orientador Escolar</button>
+                <button class="action-btn">Línea de Ayuda 24/7</button>
+            </div>
+        </section>
+
+        <section id="stats" class="stats">
+            <h2>Estadísticas Importantes</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number">1 de 3</span>
+                    <p>estudiantes ha experimentado bullying</p>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">70%</span>
+                    <p>de estudiantes ha presenciado bullying</p>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">64%</span>
+                    <p>de víctimas no reporta el acoso</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Colegio Anti-Bullying. Creado el 3 de Noviembre de 2025.</p>
+        <p>Juntos podemos crear un ambiente escolar más seguro y respetuoso.</p>
+    </footer>
+
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Reportar Incidente</h2>
+            <form id="reportForm">
+                <label for="reportType">Tipo de incidente:</label>
+                <select id="reportType" required>
+                    <option value="">Selecciona...</option>
+                    <option value="verbal">Verbal</option>
+                    <option value="fisico">Físico</option>
+                    <option value="ciber">Ciberbullying</option>
+                    <option value="social">Social</option>
+                </select>
+                
+                <label for="description">Descripción:</label>
+                <textarea id="description" rows="4" required></textarea>
+                
+                <label>
+                    <input type="checkbox" id="anonymous">
+                    Enviar de forma anónima
+                </label>
+                
+                <button type="submit">Enviar Reporte</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
