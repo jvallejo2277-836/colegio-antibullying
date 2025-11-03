@@ -1,0 +1,27 @@
+erDiagram
+    COLEGIO {
+        int id PK
+        varchar nombre
+        text direccion
+        datetime created_at
+    }
+    INCIDENTREPORT {
+        int id PK
+        int colegio_id FK
+        varchar titulo
+        text descripcion
+        bool anonimo
+        varchar reportero_nombre
+        varchar estado
+        datetime created_at
+    }
+    EVIDENCE {
+        int id PK
+        int reporte_id FK
+        varchar archivo
+        varchar descripcion
+        datetime uploaded_at
+    }
+
+    COLEGIO ||--o{ INCIDENTREPORT : "reportes"
+    INCIDENTREPORT ||--o{ EVIDENCE : "evidencias"
