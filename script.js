@@ -30,12 +30,15 @@ reportForm.addEventListener('submit', (e) => {
     const anonymous = document.getElementById('anonymous').checked;
     
     // In a real application, this would send data to a server
-    console.log('Report submitted:', {
+    // Store report metadata without sensitive details
+    const reportData = {
         type: reportType,
-        description: description,
         anonymous: anonymous,
         timestamp: new Date().toISOString()
-    });
+    };
+    
+    // For demonstration: log only non-sensitive metadata
+    console.log('Report submitted successfully at:', reportData.timestamp);
     
     // Show success message
     alert('¡Gracias por tu reporte! Un miembro de nuestro equipo lo revisará pronto.');
