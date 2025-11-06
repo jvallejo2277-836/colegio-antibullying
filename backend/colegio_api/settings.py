@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     'core',
 ]
 
@@ -56,6 +57,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        'OPTIONS': {
+            'init_command': "PRAGMA encoding='UTF-8';",
+        },
     }
 }
 
@@ -77,10 +81,28 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = []
 
-LANGUAGE_CODE = 'es-ES'
-TIME_ZONE = 'UTC'
+# Configuración de idioma y localización
+LANGUAGE_CODE = 'es-cl'  # Español de Chile específicamente
+TIME_ZONE = 'America/Santiago'  # Zona horaria de Chile
 USE_I18N = True
+USE_L10N = True
 USE_TZ = True
+
+# Configuración de encoding UTF-8
+DEFAULT_CHARSET = 'utf-8'
+FILE_CHARSET = 'utf-8'
+
+# Configuración de localización para números, fechas, etc.
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
+
+# Formatos de fecha chilenos
+DATE_FORMAT = 'd/m/Y'
+DATETIME_FORMAT = 'd/m/Y H:i'
+TIME_FORMAT = 'H:i'
+SHORT_DATE_FORMAT = 'd/m/Y'
+SHORT_DATETIME_FORMAT = 'd/m/Y H:i'
 
 STATIC_URL = '/static/'
 # Media (uploaded files)
@@ -92,4 +114,11 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20
 }
