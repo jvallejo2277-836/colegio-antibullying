@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
-  Grid,
   Card,
   CardContent,
   CardHeader,
@@ -20,437 +19,407 @@ import {
   TableRow,
   Paper,
   Alert,
-  Divider
+  Divider,
+  Stack,
+  Container
 } from '@mui/material';
-import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer
-} from 'recharts';
-import {
-  Assessment,
-  TrendingUp,
-  Warning,
-  CheckCircle,
-  Schedule,
-  Person,
-  School,
-  Download
-} from '@mui/icons-material';
+// Recharts temporalmente removido para evitar errores de contexto
+// import {
+//   BarChart,
+//   Bar,
+//   LineChart,
+//   Line,
+//   PieChart,
+//   Pie,
+//   XAxis,
+//   YAxis,
+//   CartesianGrid,
+//   Tooltip,
+//   Legend,
+//   Cell
+// } from 'recharts';
+// Removed date-fns imports - using native Date methods instead
 
-interface ReporteStats {
-  totalDenuncias: number;
-  denunciasAbiertas: number;
-  denunciasCerradas: number;
-  promedioResolucion: number;
-  casosCriticos: number;
-  cumplimientoLey: number;
-}
-
-interface DenunciaPorMes {
-  mes: string;
-  cantidad: number;
-  resueltas: number;
-}
-
-interface DenunciaPorTipo {
+// Interfaces
+interface ReporteIncidente {
+  id: number;
+  fecha: string;
   tipo: string;
-  cantidad: number;
-  porcentaje: number;
-  color: string;
+  gravedad: 'LEVE' | 'GRAVE' | 'GRAVISIMA';
+  colegio: string;
+  estado: 'ABIERTO' | 'EN_INVESTIGACION' | 'CERRADO';
+  requiere_denuncia_obligatoria: boolean;
+  descripcion: string;
+}
+
+interface EstadisticasResumen {
+  totalIncidentes: number;
+  incidentesGraves: number;
+  denunciasObligatorias: number;
+  casosAbiertos: number;
+  porcentajeCrecimiento: number;
 }
 
 const ReportesAntibullying: React.FC = () => {
-  const [periodo, setPeriodo] = useState('mes');
-  const [año, setAño] = useState(new Date().getFullYear());
+  const [reportes, setReportes] = useState<ReporteIncidente[]>([]);
+  const [estadisticas, setEstadisticas] = useState<EstadisticasResumen | null>(null);
+  const [tipoFiltro, setTipoFiltro] = useState<string>('TODOS');
+  const [gravedadFiltro, setGravedadFiltro] = useState<string>('TODOS');
   const [loading, setLoading] = useState(false);
 
-  // Datos de ejemplo (en producción vendrían del backend)
-  const [stats, setStats] = useState<ReporteStats>({
-    totalDenuncias: 47,
-    denunciasAbiertas: 8,
-    denunciasCerradas: 39,
-    promedioResolucion: 3.2,
-    casosCriticos: 2,
-    cumplimientoLey: 98.5
-  });
-
-  const dataPorMes: DenunciaPorMes[] = [
-    { mes: 'Ene', cantidad: 5, resueltas: 4 },
-    { mes: 'Feb', cantidad: 3, resueltas: 3 },
-    { mes: 'Mar', cantidad: 8, resueltas: 7 },
-    { mes: 'Abr', cantidad: 6, resueltas: 5 },
-    { mes: 'May', cantidad: 4, resueltas: 4 },
-    { mes: 'Jun', cantidad: 7, resueltas: 6 },
-    { mes: 'Jul', cantidad: 2, resueltas: 2 },
-    { mes: 'Ago', cantidad: 9, resueltas: 8 },
-    { mes: 'Sep', cantidad: 3, resueltas: 0 }
-  ];
-
-  const dataPorTipo: DenunciaPorTipo[] = [
-    { tipo: 'Violencia Física', cantidad: 18, porcentaje: 38.3, color: '#f44336' },
-    { tipo: 'Violencia Psicológica', cantidad: 15, porcentaje: 31.9, color: '#ff9800' },
-    { tipo: 'Ciberacoso', cantidad: 8, porcentaje: 17.0, color: '#2196f3' },
-    { tipo: 'Discriminación', cantidad: 4, porcentaje: 8.5, color: '#9c27b0' },
-    { tipo: 'Otros', cantidad: 2, porcentaje: 4.3, color: '#4caf50' }
-  ];
-
-  const casosRecientes = [
+  // Datos mock para desarrollo
+  const mockReportes: ReporteIncidente[] = [
     {
-      id: 'D-2024-047',
-      fecha: '2024-11-05',
-      tipo: 'Violencia Física',
-      estado: 'En Investigación',
-      plazo: '1 día restante',
-      prioridad: 'Alta'
+      id: 1,
+      fecha: '2025-11-01',
+      tipo: 'ACOSO_VERBAL',
+      gravedad: 'GRAVE',
+      colegio: 'Liceo Experimental Manuel de Salas',
+      estado: 'EN_INVESTIGACION',
+      requiere_denuncia_obligatoria: true,
+      descripcion: 'Incidente de acoso verbal entre estudiantes'
     },
     {
-      id: 'D-2024-046',
-      fecha: '2024-11-03',
-      tipo: 'Ciberacoso',
-      estado: 'Resuelto',
-      plazo: 'Completado',
-      prioridad: 'Media'
+      id: 2,
+      fecha: '2025-11-02',
+      tipo: 'CYBERBULLYING',
+      gravedad: 'GRAVISIMA',
+      colegio: 'Colegio San Patricio',
+      estado: 'ABIERTO',
+      requiere_denuncia_obligatoria: true,
+      descripcion: 'Caso de cyberbullying en redes sociales'
     },
     {
-      id: 'D-2024-045',
-      fecha: '2024-11-01',
-      tipo: 'Violencia Psicológica',
-      estado: 'En Mediación',
-      plazo: '3 días restantes',
-      prioridad: 'Media'
+      id: 3,
+      fecha: '2025-11-03',
+      tipo: 'EXCLUSION_SOCIAL',
+      gravedad: 'LEVE',
+      colegio: 'Instituto Nacional',
+      estado: 'CERRADO',
+      requiere_denuncia_obligatoria: false,
+      descripcion: 'Exclusión social en actividades grupales'
     }
   ];
 
-  const getPrioridadColor = (prioridad: string) => {
-    switch (prioridad) {
-      case 'Alta': return 'error';
-      case 'Media': return 'warning';
-      case 'Baja': return 'success';
+  const mockEstadisticas: EstadisticasResumen = {
+    totalIncidentes: 45,
+    incidentesGraves: 12,
+    denunciasObligatorias: 8,
+    casosAbiertos: 15,
+    porcentajeCrecimiento: -12.5
+  };
+
+  useEffect(() => {
+    cargarDatos();
+  }, []);
+
+  const cargarDatos = async () => {
+    setLoading(true);
+    try {
+      // TODO: Reemplazar con llamadas reales al API
+      setTimeout(() => {
+        setReportes(mockReportes);
+        setEstadisticas(mockEstadisticas);
+        setLoading(false);
+      }, 1000);
+    } catch (error) {
+      console.error('Error cargando datos:', error);
+      setLoading(false);
+    }
+  };
+
+  const reportesFiltrados = reportes.filter(reporte => {
+    const coincideTipo = tipoFiltro === 'TODOS' || reporte.tipo === tipoFiltro;
+    const coincideGravedad = gravedadFiltro === 'TODOS' || reporte.gravedad === gravedadFiltro;
+    return coincideTipo && coincideGravedad;
+  });
+
+  const getGravedadColor = (gravedad: string) => {
+    switch (gravedad) {
+      case 'LEVE': return 'success';
+      case 'GRAVE': return 'warning';
+      case 'GRAVISIMA': return 'error';
       default: return 'default';
     }
   };
 
   const getEstadoColor = (estado: string) => {
     switch (estado) {
-      case 'Resuelto': return 'success';
-      case 'En Investigación': return 'error';
-      case 'En Mediación': return 'warning';
+      case 'ABIERTO': return 'error';
+      case 'EN_INVESTIGACION': return 'warning';
+      case 'CERRADO': return 'success';
       default: return 'default';
     }
   };
 
-  const exportarReporte = () => {
-    // Implementar exportación a PDF/Excel
-    alert('Exportando reporte... (función en desarrollo)');
-  };
+  // Datos para gráficos
+  const datosGraficoPorTipo = [
+    { nombre: 'Acoso Verbal', cantidad: 15 },
+    { nombre: 'Cyberbullying', cantidad: 8 },
+    { nombre: 'Exclusión Social', cantidad: 12 },
+    { nombre: 'Agresión Física', cantidad: 6 },
+    { nombre: 'Otros', cantidad: 4 }
+  ];
+
+  const datosGraficoPorMes = [
+    { mes: 'Ene', cantidad: 8 },
+    { mes: 'Feb', cantidad: 12 },
+    { mes: 'Mar', cantidad: 15 },
+    { mes: 'Abr', cantidad: 10 },
+    { mes: 'May', cantidad: 18 },
+    { mes: 'Jun', cantidad: 14 }
+  ];
+
+  const colores = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1'];
+
+  if (loading) {
+    return (
+      <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+          <Typography>Cargando reportes de antibullying...</Typography>
+        </Box>
+      </Container>
+    );
+  }
 
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Header */}
-      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
-          📊 Reportes y Estadísticas Antibullying
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <FormControl size="small" sx={{ minWidth: 120 }}>
-            <InputLabel>Período</InputLabel>
-            <Select
-              value={periodo}
-              label="Período"
-              onChange={(e) => setPeriodo(e.target.value)}
-            >
-              <MenuItem value="mes">Este Mes</MenuItem>
-              <MenuItem value="trimestre">Trimestre</MenuItem>
-              <MenuItem value="año">Año Completo</MenuItem>
-            </Select>
-          </FormControl>
-          <Button
-            variant="contained"
-            startIcon={<Download />}
-            onClick={exportarReporte}
-          >
-            Exportar Reporte
-          </Button>
-        </Box>
-      </Box>
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Reportes de Antibullying
+      </Typography>
+      <Typography variant="subtitle1" color="text.secondary" paragraph>
+        Análisis y seguimiento de incidentes de convivencia escolar
+      </Typography>
 
-      {/* Tarjetas de Estadísticas Principales */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={2}>
-          <Card>
+      {/* Estadísticas Resumen */}
+      {estadisticas && (
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} sx={{ mb: 4 }}>
+          <Card sx={{ flex: 1 }}>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Assessment sx={{ color: 'primary.main', mr: 1 }} />
-                <Typography variant="h6">{stats.totalDenuncias}</Typography>
+              <Box display="flex" alignItems="center" justifyContent="space-between">
+                <Box>
+                  <Typography color="textSecondary" gutterBottom>
+                    Total Incidentes
+                  </Typography>
+                  <Typography variant="h4">
+                    {estadisticas.totalIncidentes}
+                  </Typography>
+                </Box>
               </Box>
-              <Typography variant="body2" color="text.secondary">
-                Total Denuncias
-              </Typography>
             </CardContent>
           </Card>
-        </Grid>
 
-        <Grid item xs={12} sm={6} md={2}>
-          <Card>
+          <Card sx={{ flex: 1 }}>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Warning sx={{ color: 'warning.main', mr: 1 }} />
-                <Typography variant="h6">{stats.denunciasAbiertas}</Typography>
+              <Box display="flex" alignItems="center" justifyContent="space-between">
+                <Box>
+                  <Typography color="textSecondary" gutterBottom>
+                    Incidentes Graves
+                  </Typography>
+                  <Typography variant="h4" color="warning.main">
+                    {estadisticas.incidentesGraves}
+                  </Typography>
+                </Box>
               </Box>
-              <Typography variant="body2" color="text.secondary">
-                Casos Abiertos
-              </Typography>
             </CardContent>
           </Card>
-        </Grid>
 
-        <Grid item xs={12} sm={6} md={2}>
-          <Card>
+          <Card sx={{ flex: 1 }}>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <CheckCircle sx={{ color: 'success.main', mr: 1 }} />
-                <Typography variant="h6">{stats.denunciasCerradas}</Typography>
+              <Box display="flex" alignItems="center" justifyContent="space-between">
+                <Box>
+                  <Typography color="textSecondary" gutterBottom>
+                    Denuncias Obligatorias
+                  </Typography>
+                  <Typography variant="h4" color="error.main">
+                    {estadisticas.denunciasObligatorias}
+                  </Typography>
+                </Box>
               </Box>
-              <Typography variant="body2" color="text.secondary">
-                Casos Resueltos
-              </Typography>
             </CardContent>
           </Card>
-        </Grid>
 
-        <Grid item xs={12} sm={6} md={2}>
-          <Card>
+          <Card sx={{ flex: 1 }}>
             <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Schedule sx={{ color: 'info.main', mr: 1 }} />
-                <Typography variant="h6">{stats.promedioResolucion}</Typography>
+              <Box display="flex" alignItems="center" justifyContent="space-between">
+                <Box>
+                  <Typography color="textSecondary" gutterBottom>
+                    Casos Abiertos
+                  </Typography>
+                  <Typography variant="h4" color="info.main">
+                    {estadisticas.casosAbiertos}
+                  </Typography>
+                </Box>
               </Box>
-              <Typography variant="body2" color="text.secondary">
-                Días Promedio
-              </Typography>
             </CardContent>
           </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={2}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <TrendingUp sx={{ color: 'success.main', mr: 1 }} />
-                <Typography variant="h6">{stats.cumplimientoLey}%</Typography>
-              </Box>
-              <Typography variant="body2" color="text.secondary">
-                Cumplimiento Ley
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={2}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Warning sx={{ color: 'error.main', mr: 1 }} />
-                <Typography variant="h6">{stats.casosCriticos}</Typography>
-              </Box>
-              <Typography variant="body2" color="text.secondary">
-                Casos Críticos
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      {/* Alerta de Cumplimiento Legal */}
-      {stats.cumplimientoLey >= 95 ? (
-        <Alert severity="success" sx={{ mb: 3 }}>
-          ✅ Cumplimiento excelente de la Ley 20.536. Todos los reportes obligatorios están al día.
-        </Alert>
-      ) : (
-        <Alert severity="warning" sx={{ mb: 3 }}>
-          ⚠️ Atención: Hay {stats.casosCriticos} casos que requieren seguimiento urgente según Ley 20.536.
-        </Alert>
+        </Stack>
       )}
 
-      {/* Gráficos */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        {/* Gráfico de Tendencia Mensual */}
-        <Grid item xs={12} md={8}>
-          <Card>
-            <CardHeader title="📈 Tendencia de Denuncias por Mes" />
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={dataPorMes}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="mes" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="cantidad" fill="#2196f3" name="Total Denuncias" />
-                  <Bar dataKey="resueltas" fill="#4caf50" name="Resueltas" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Gráfico de Tipos de Violencia */}
-        <Grid item xs={12} md={4}>
-          <Card>
-            <CardHeader title="🎯 Tipos de Violencia" />
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={dataPorTipo}
-                    dataKey="cantidad"
-                    nameKey="tipo"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    label={({ porcentaje }) => `${porcentaje}%`}
-                  >
-                    {dataPorTipo.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-              <Box sx={{ mt: 2 }}>
-                {dataPorTipo.map((item, index) => (
-                  <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                    <Box
-                      sx={{
-                        width: 12,
-                        height: 12,
-                        backgroundColor: item.color,
-                        borderRadius: '50%',
-                        mr: 1
-                      }}
-                    />
-                    <Typography variant="body2" sx={{ flex: 1 }}>
-                      {item.tipo}
-                    </Typography>
-                    <Typography variant="body2" fontWeight="bold">
-                      {item.cantidad}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      {/* Tabla de Casos Recientes */}
-      <Card>
-        <CardHeader title="📋 Casos Recientes Requiriendo Atención" />
+      {/* Filtros */}
+      <Card sx={{ mb: 4 }}>
+        <CardHeader title="Filtros de Búsqueda" />
         <CardContent>
-          <TableContainer component={Paper} variant="outlined">
+          <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+            <FormControl sx={{ minWidth: 200 }}>
+              <InputLabel>Tipo de Incidente</InputLabel>
+              <Select
+                value={tipoFiltro}
+                onChange={(e) => setTipoFiltro(e.target.value)}
+                label="Tipo de Incidente"
+              >
+                <MenuItem value="TODOS">Todos</MenuItem>
+                <MenuItem value="ACOSO_VERBAL">Acoso Verbal</MenuItem>
+                <MenuItem value="CYBERBULLYING">Cyberbullying</MenuItem>
+                <MenuItem value="EXCLUSION_SOCIAL">Exclusión Social</MenuItem>
+                <MenuItem value="AGRESION_FISICA">Agresión Física</MenuItem>
+              </Select>
+            </FormControl>
+
+            <FormControl sx={{ minWidth: 200 }}>
+              <InputLabel>Gravedad</InputLabel>
+              <Select
+                value={gravedadFiltro}
+                onChange={(e) => setGravedadFiltro(e.target.value)}
+                label="Gravedad"
+              >
+                <MenuItem value="TODOS">Todas</MenuItem>
+                <MenuItem value="LEVE">Leve</MenuItem>
+                <MenuItem value="GRAVE">Grave</MenuItem>
+                <MenuItem value="GRAVISIMA">Gravísima</MenuItem>
+              </Select>
+            </FormControl>
+
+            <Button 
+              variant="contained" 
+              onClick={cargarDatos}
+              sx={{ minWidth: 150 }}
+            >
+              Actualizar Datos
+            </Button>
+          </Stack>
+        </CardContent>
+      </Card>
+
+      {/* Gráficos */}
+      <Stack direction={{ xs: 'column', lg: 'row' }} spacing={3} sx={{ mb: 4 }}>
+        <Card sx={{ flex: 1 }}>
+          <CardHeader title="Tendencia Mensual" />
+          <CardContent>
+            <Box width="100%" height={300} display="flex" flexDirection="column" gap={2}>
+              <Typography variant="body2" color="text.secondary">Gráfico de tendencia mensual</Typography>
+              {datosGraficoPorMes.map((item, index) => (
+                <Box key={index} display="flex" alignItems="center" gap={2}>
+                  <Typography variant="body2" sx={{ minWidth: 80 }}>{item.mes}</Typography>
+                  <Box 
+                    sx={{ 
+                      height: 20, 
+                      backgroundColor: '#8884d8', 
+                      width: `${(item.cantidad / Math.max(...datosGraficoPorMes.map(d => d.cantidad))) * 200}px`,
+                      borderRadius: 1
+                    }} 
+                  />
+                  <Typography variant="body2">{item.cantidad}</Typography>
+                </Box>
+              ))}
+            </Box>
+          </CardContent>
+        </Card>
+
+        <Card sx={{ flex: 1 }}>
+          <CardHeader title="Distribución por Tipo" />
+          <CardContent>
+            <Box width="100%" height={300} display="flex" flexDirection="column" gap={2}>
+              <Typography variant="body2" color="text.secondary">Distribución por tipo de incidente</Typography>
+              {datosGraficoPorTipo.map((item, index) => (
+                <Box key={index} display="flex" alignItems="center" gap={2}>
+                  <Box 
+                    sx={{ 
+                      width: 16, 
+                      height: 16, 
+                      backgroundColor: colores[index % colores.length], 
+                      borderRadius: '50%' 
+                    }} 
+                  />
+                  <Typography variant="body2" sx={{ minWidth: 120 }}>{item.nombre}</Typography>
+                  <Typography variant="body2" fontWeight="bold">{item.cantidad}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    ({((item.cantidad / datosGraficoPorTipo.reduce((sum, d) => sum + d.cantidad, 0)) * 100).toFixed(1)}%)
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </CardContent>
+        </Card>
+      </Stack>
+
+      {/* Tabla de Reportes */}
+      <Card>
+        <CardHeader title={`Incidentes Reportados (${reportesFiltrados.length})`} />
+        <CardContent>
+          <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>ID Caso</strong></TableCell>
-                  <TableCell><strong>Fecha</strong></TableCell>
-                  <TableCell><strong>Tipo</strong></TableCell>
-                  <TableCell><strong>Estado</strong></TableCell>
-                  <TableCell><strong>Plazo Legal</strong></TableCell>
-                  <TableCell><strong>Prioridad</strong></TableCell>
+                  <TableCell>ID</TableCell>
+                  <TableCell>Fecha</TableCell>
+                  <TableCell>Tipo</TableCell>
+                  <TableCell>Gravedad</TableCell>
+                  <TableCell>Colegio</TableCell>
+                  <TableCell>Estado</TableCell>
+                  <TableCell>Denuncia Obligatoria</TableCell>
+                  <TableCell>Descripción</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {casosRecientes.map((caso) => (
-                  <TableRow key={caso.id} hover>
+                {reportesFiltrados.map((reporte) => (
+                  <TableRow key={reporte.id}>
+                    <TableCell>{reporte.id}</TableCell>
                     <TableCell>
-                      <Typography variant="body2" fontWeight="bold">
-                        {caso.id}
+                      {new Date(reporte.fecha).toLocaleDateString('es-ES')}
+                    </TableCell>
+                    <TableCell>{reporte.tipo.replace('_', ' ')}</TableCell>
+                    <TableCell>
+                      <Chip 
+                        label={reporte.gravedad}
+                        color={getGravedadColor(reporte.gravedad) as any}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>{reporte.colegio}</TableCell>
+                    <TableCell>
+                      <Chip 
+                        label={reporte.estado.replace('_', ' ')}
+                        color={getEstadoColor(reporte.estado) as any}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      {reporte.requiere_denuncia_obligatoria ? (
+                        <Chip label="SÍ" color="error" size="small" />
+                      ) : (
+                        <Chip label="NO" color="success" size="small" />
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2" noWrap>
+                        {reporte.descripcion}
                       </Typography>
-                    </TableCell>
-                    <TableCell>{caso.fecha}</TableCell>
-                    <TableCell>{caso.tipo}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={caso.estado}
-                        color={getEstadoColor(caso.estado) as any}
-                        size="small"
-                      />
-                    </TableCell>
-                    <TableCell>{caso.plazo}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={caso.prioridad}
-                        color={getPrioridadColor(caso.prioridad) as any}
-                        size="small"
-                      />
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
-        </CardContent>
-      </Card>
 
-      {/* Sección de Reportes Obligatorios */}
-      <Card sx={{ mt: 3 }}>
-        <CardHeader title="📄 Reportes Obligatorios Ley 20.536" />
-        <CardContent>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
-              <Button
-                variant="outlined"
-                fullWidth
-                startIcon={<Assessment />}
-                sx={{ mb: 1 }}
-              >
-                Reporte Mensual MINEDUC
-              </Button>
-              <Typography variant="caption" color="text.secondary">
-                Último envío: 01/11/2024
-              </Typography>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Button
-                variant="outlined"
-                fullWidth
-                startIcon={<School />}
-                sx={{ mb: 1 }}
-              >
-                Informe Superintendencia
-              </Button>
-              <Typography variant="caption" color="text.secondary">
-                Próximo envío: 15/11/2024
-              </Typography>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Button
-                variant="outlined"
-                fullWidth
-                startIcon={<Person />}
-                sx={{ mb: 1 }}
-              >
-                Reporte Apoderados
-              </Button>
-              <Typography variant="caption" color="text.secondary">
-                Generación automática
-              </Typography>
-            </Grid>
-          </Grid>
+          {reportesFiltrados.length === 0 && (
+            <Alert severity="info" sx={{ mt: 2 }}>
+              No se encontraron incidentes que coincidan con los filtros seleccionados.
+            </Alert>
+          )}
         </CardContent>
       </Card>
-    </Box>
+    </Container>
   );
 };
 

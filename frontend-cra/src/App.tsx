@@ -46,11 +46,11 @@ import {
 } from '@mui/icons-material';
 
 // Componentes
-import Dashboard from './components/Dashboard';
+import Dashboard from './components/DashboardSimple';
 import ProtocolosDashboard from './components/protocolos/ProtocolosDashboard';
 import SostenedoresDashboard from './components/sostenedores/SostenedoresDashboard';
 import AntibullyingDashboard from './components/antibullying/AntibullyingDashboard';
-import ReportesAntibullying from './components/Reportes/ReportesAntibullying';
+import ReportesAntibullying from './components/reportes/ReportesAntibullying';
 
 // Componentes placeholder para mantenedores
 const ColegiosManager = () => <div><h2>Gestión de Colegios</h2><p>Mantenedor de colegios en desarrollo...</p></div>;

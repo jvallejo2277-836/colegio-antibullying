@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box,
-  Grid,
+  Stack,
   Card,
   CardContent,
   Typography,
@@ -25,7 +25,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Tooltip
+  Tooltip,
+  CircularProgress
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -39,6 +40,7 @@ import {
   Group as GroupIcon
 } from '@mui/icons-material';
 import { SnackbarProvider, useSnackbar } from 'notistack';
+import { apiService, Colegio } from '../../services/api';
 
 // Interfaces
 interface Sostenedor {
@@ -124,8 +126,10 @@ const estadisticasMock: EstadisticasSostenedor = {
 
 function SostenedoresDashboardContent() {
   const { enqueueSnackbar } = useSnackbar();
-  const [sostenedores, setSostenedores] = useState<Sostenedor[]>(sostenedoresMock);
+  const [sostenedores, setSostenedores] = useState<Sostenedor[]>([]);
+  const [colegios, setColegios] = useState<Colegio[]>([]);
   const [estadisticas, setEstadisticas] = useState<EstadisticasSostenedor>(estadisticasMock);
+  const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingSostenedor, setEditingSostenedor] = useState<Sostenedor | null>(null);
   const [formData, setFormData] = useState({
@@ -136,6 +140,44 @@ function SostenedoresDashboardContent() {
     telefono: '',
     direccion: ''
   });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const colegiosData = await apiService.getColegios();
+        setColegios(colegiosData);
+        
+        // Convertir colegios a sostenedores para mostrar
+        const sostenedoresFromColegios: Sostenedor[] = colegiosData.map((colegio, index) => ({
+          id: colegio.id,
+          nombre: colegio.nombre,
+          rut: colegio.rbd, // Usamos RBD como identificador
+          tipo: 'Municipal' as const,
+          email: colegio.email,
+          telefono: colegio.telefono,
+          direccion: colegio.direccion,
+          establecimientos: 1,
+          estudiantes_total: 500 + (index * 200), // Datos simulados
+          casos_abiertos: Math.floor(Math.random() * 10),
+          estado: 'Activo' as const,
+          fecha_registro: colegio.created_at.split('T')[0],
+          ultimo_reporte: new Date().toISOString().split('T')[0]
+        }));
+        
+        setSostenedores(sostenedoresFromColegios);
+        enqueueSnackbar(`${colegiosData.length} colegios cargados desde API`, { variant: 'success' });
+      } catch (error) {
+        console.error('Error loading colegios:', error);
+        setSostenedores(sostenedoresMock); // Fallback a datos mock
+        enqueueSnackbar('Error cargando datos, mostrando datos de ejemplo', { variant: 'warning' });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [enqueueSnackbar]);
 
   const handleOpenDialog = (sostenedor?: Sostenedor) => {
     if (sostenedor) {
@@ -232,99 +274,96 @@ function SostenedoresDashboardContent() {
       <Typography variant="h4" gutterBottom>
         Gestión de Sostenedores
       </Typography>
+
+      {loading ? (
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+          <CircularProgress />
+        </Box>
+      ) : (
+        <>
       
       {/* Estadísticas Generales */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={2.4}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center">
-                <BusinessIcon color="primary" sx={{ mr: 1 }} />
-                <Box>
-                  <Typography color="text.secondary" gutterBottom>
-                    Total Sostenedores
-                  </Typography>
-                  <Typography variant="h4">
-                    {estadisticas.total_sostenedores}
-                  </Typography>
-                </Box>
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} sx={{ mb: 4 }} flexWrap="wrap">
+        <Card sx={{ flex: 1, minWidth: 200 }}>
+          <CardContent>
+            <Box display="flex" alignItems="center">
+              <BusinessIcon color="primary" sx={{ mr: 1 }} />
+              <Box>
+                <Typography color="text.secondary" gutterBottom>
+                  Total Sostenedores
+                </Typography>
+                <Typography variant="h4">
+                  {estadisticas.total_sostenedores}
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+            </Box>
+          </CardContent>
+        </Card>
         
-        <Grid item xs={12} sm={6} md={2.4}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center">
-                <SchoolIcon color="secondary" sx={{ mr: 1 }} />
-                <Box>
-                  <Typography color="text.secondary" gutterBottom>
-                    Establecimientos
-                  </Typography>
-                  <Typography variant="h4">
-                    {estadisticas.total_establecimientos}
-                  </Typography>
-                </Box>
+        <Card sx={{ flex: 1, minWidth: 200 }}>
+          <CardContent>
+            <Box display="flex" alignItems="center">
+              <SchoolIcon color="secondary" sx={{ mr: 1 }} />
+              <Box>
+                <Typography color="text.secondary" gutterBottom>
+                  Establecimientos
+                </Typography>
+                <Typography variant="h4">
+                  {estadisticas.total_establecimientos}
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+            </Box>
+          </CardContent>
+        </Card>
         
-        <Grid item xs={12} sm={6} md={2.4}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center">
-                <GroupIcon color="info" sx={{ mr: 1 }} />
-                <Box>
-                  <Typography color="text.secondary" gutterBottom>
-                    Total Estudiantes
-                  </Typography>
-                  <Typography variant="h4">
-                    {estadisticas.total_estudiantes.toLocaleString()}
-                  </Typography>
-                </Box>
+        <Card sx={{ flex: 1, minWidth: 200 }}>
+          <CardContent>
+            <Box display="flex" alignItems="center">
+              <GroupIcon color="info" sx={{ mr: 1 }} />
+              <Box>
+                <Typography color="text.secondary" gutterBottom>
+                  Total Estudiantes
+                </Typography>
+                <Typography variant="h4">
+                  {estadisticas.total_estudiantes.toLocaleString()}
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+            </Box>
+          </CardContent>
+        </Card>
         
-        <Grid item xs={12} sm={6} md={2.4}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center">
-                <WarningIcon color="error" sx={{ mr: 1 }} />
-                <Box>
-                  <Typography color="text.secondary" gutterBottom>
-                    Casos Críticos
-                  </Typography>
-                  <Typography variant="h4">
-                    {estadisticas.casos_criticos}
-                  </Typography>
-                </Box>
+        <Card sx={{ flex: 1, minWidth: 200 }}>
+          <CardContent>
+            <Box display="flex" alignItems="center">
+              <WarningIcon color="error" sx={{ mr: 1 }} />
+              <Box>
+                <Typography color="text.secondary" gutterBottom>
+                  Casos Críticos
+                </Typography>
+                <Typography variant="h4">
+                  {estadisticas.casos_criticos}
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+            </Box>
+          </CardContent>
+        </Card>
         
-        <Grid item xs={12} sm={6} md={2.4}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center">
-                <CheckCircleIcon color="success" sx={{ mr: 1 }} />
-                <Box>
-                  <Typography color="text.secondary" gutterBottom>
-                    Cumplimiento Legal
-                  </Typography>
-                  <Typography variant="h4">
-                    {estadisticas.cumplimiento_promedio}%
-                  </Typography>
-                </Box>
+        <Card sx={{ flex: 1, minWidth: 200 }}>
+          <CardContent>
+            <Box display="flex" alignItems="center">
+              <CheckCircleIcon color="success" sx={{ mr: 1 }} />
+              <Box>
+                <Typography color="text.secondary" gutterBottom>
+                  Cumplimiento Legal
+                </Typography>
+                <Typography variant="h4">
+                  {estadisticas.cumplimiento_promedio}%
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+            </Box>
+          </CardContent>
+        </Card>
+      </Stack>
 
       {/* Alerta de Cumplimiento Legal */}
       <Alert severity="info" sx={{ mb: 3 }}>
@@ -430,66 +469,72 @@ function SostenedoresDashboardContent() {
           {editingSostenedor ? 'Editar Sostenedor' : 'Agregar Nuevo Sostenedor'}
         </DialogTitle>
         <DialogContent>
-          <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Nombre del Sostenedor"
-                value={formData.nombre}
-                onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="RUT"
-                value={formData.rut}
-                onChange={(e) => setFormData({ ...formData, rut: e.target.value })}
-                placeholder="12.345.678-9"
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <FormControl fullWidth>
-                <InputLabel>Tipo de Sostenedor</InputLabel>
-                <Select
-                  value={formData.tipo}
-                  label="Tipo de Sostenedor"
-                  onChange={(e) => setFormData({ ...formData, tipo: e.target.value as Sostenedor['tipo'] })}
-                >
-                  <MenuItem value="Municipal">Municipal</MenuItem>
-                  <MenuItem value="Particular Subvencionado">Particular Subvencionado</MenuItem>
-                  <MenuItem value="Particular Pagado">Particular Pagado</MenuItem>
-                  <MenuItem value="Corporación Municipal">Corporación Municipal</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Teléfono"
-                value={formData.telefono}
-                onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-                placeholder="+56 2 2xxx xxxx"
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Dirección"
-                value={formData.direccion}
-                onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
-              />
-            </Grid>
-          </Grid>
+          <Stack spacing={2} sx={{ mt: 1 }}>
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+              <Box sx={{ flex: 1 }}>
+                <TextField
+                  fullWidth
+                  label="Nombre del Sostenedor"
+                  value={formData.nombre}
+                  onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                />
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <TextField
+                  fullWidth
+                  label="RUT"
+                  value={formData.rut}
+                  onChange={(e) => setFormData({ ...formData, rut: e.target.value })}
+                  placeholder="12.345.678-9"
+                />
+              </Box>
+            </Stack>
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+              <Box sx={{ flex: 1 }}>
+                <FormControl fullWidth>
+                  <InputLabel>Tipo de Sostenedor</InputLabel>
+                  <Select
+                    value={formData.tipo}
+                    label="Tipo de Sostenedor"
+                    onChange={(e) => setFormData({ ...formData, tipo: e.target.value as Sostenedor['tipo'] })}
+                  >
+                    <MenuItem value="Municipal">Municipal</MenuItem>
+                    <MenuItem value="Particular Subvencionado">Particular Subvencionado</MenuItem>
+                    <MenuItem value="Particular Pagado">Particular Pagado</MenuItem>
+                    <MenuItem value="Corporación Municipal">Corporación Municipal</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <TextField
+                  fullWidth
+                  label="Email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                />
+              </Box>
+            </Stack>
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
+              <Box sx={{ flex: 1 }}>
+                <TextField
+                  fullWidth
+                  label="Teléfono"
+                  value={formData.telefono}
+                  onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+                  placeholder="+56 2 2xxx xxxx"
+                />
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <TextField
+                  fullWidth
+                  label="Dirección"
+                  value={formData.direccion}
+                  onChange={(e) => setFormData({ ...formData, direccion: e.target.value })}
+                />
+              </Box>
+            </Stack>
+          </Stack>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>Cancelar</Button>
@@ -502,6 +547,8 @@ function SostenedoresDashboardContent() {
           </Button>
         </DialogActions>
       </Dialog>
+        </>
+      )}
     </Box>
   );
 }

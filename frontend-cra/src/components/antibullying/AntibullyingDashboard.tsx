@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box,
-  Grid,
+  Stack,
   Card,
   CardContent,
   Typography,
@@ -273,115 +273,103 @@ function AntibullyingDashboardContent() {
       </Alert>
 
       {/* Estadísticas Críticas */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={2}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center">
-                <ReportIcon color="primary" sx={{ mr: 1 }} />
-                <Box>
-                  <Typography color="text.secondary" gutterBottom>
-                    Total Denuncias
-                  </Typography>
-                  <Typography variant="h4">
-                    {estadisticas.total_denuncias}
-                  </Typography>
-                </Box>
+      <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} sx={{ mb: 4 }} flexWrap="wrap">
+        <Card sx={{ flex: 1, minWidth: 200 }}>
+          <CardContent>
+            <Box display="flex" alignItems="center">
+              <ReportIcon color="primary" sx={{ mr: 1 }} />
+              <Box>
+                <Typography color="text.secondary" gutterBottom>
+                  Total Denuncias
+                </Typography>
+                <Typography variant="h4">
+                  {estadisticas.total_denuncias}
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+            </Box>
+          </CardContent>
+        </Card>
         
-        <Grid item xs={12} sm={6} md={2}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center">
-                <ScheduleIcon color="warning" sx={{ mr: 1 }} />
-                <Box>
-                  <Typography color="text.secondary" gutterBottom>
-                    Casos Activos
-                  </Typography>
-                  <Typography variant="h4">
-                    {estadisticas.casos_activos}
-                  </Typography>
-                </Box>
+        <Card sx={{ flex: 1, minWidth: 200 }}>
+          <CardContent>
+            <Box display="flex" alignItems="center">
+              <ScheduleIcon color="warning" sx={{ mr: 1 }} />
+              <Box>
+                <Typography color="text.secondary" gutterBottom>
+                  Casos Activos
+                </Typography>
+                <Typography variant="h4">
+                  {estadisticas.casos_activos}
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+            </Box>
+          </CardContent>
+        </Card>
         
-        <Grid item xs={12} sm={6} md={2}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center">
-                <ErrorIcon color="error" sx={{ mr: 1 }} />
-                <Box>
-                  <Typography color="text.secondary" gutterBottom>
-                    Casos Críticos
-                  </Typography>
-                  <Typography variant="h4">
-                    {estadisticas.casos_criticos}
-                  </Typography>
-                </Box>
+        <Card sx={{ flex: 1, minWidth: 200 }}>
+          <CardContent>
+            <Box display="flex" alignItems="center">
+              <ErrorIcon color="error" sx={{ mr: 1 }} />
+              <Box>
+                <Typography color="text.secondary" gutterBottom>
+                  Casos Críticos
+                </Typography>
+                <Typography variant="h4">
+                  {estadisticas.casos_criticos}
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+            </Box>
+          </CardContent>
+        </Card>
         
-        <Grid item xs={12} sm={6} md={2}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center">
-                <AccessTimeIcon color="info" sx={{ mr: 1 }} />
-                <Box>
-                  <Typography color="text.secondary" gutterBottom>
-                    Denuncias 24h
-                  </Typography>
-                  <Typography variant="h4">
-                    {estadisticas.denuncias_24h}
-                  </Typography>
-                </Box>
+        <Card sx={{ flex: 1, minWidth: 200 }}>
+          <CardContent>
+            <Box display="flex" alignItems="center">
+              <AccessTimeIcon color="info" sx={{ mr: 1 }} />
+              <Box>
+                <Typography color="text.secondary" gutterBottom>
+                  Denuncias 24h
+                </Typography>
+                <Typography variant="h4">
+                  {estadisticas.denuncias_24h}
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+            </Box>
+          </CardContent>
+        </Card>
         
-        <Grid item xs={12} sm={6} md={2}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center">
-                <CheckCircleIcon color="success" sx={{ mr: 1 }} />
-                <Box>
-                  <Typography color="text.secondary" gutterBottom>
-                    Cumplimiento
-                  </Typography>
-                  <Typography variant="h4">
-                    {estadisticas.cumplimiento_plazos}%
-                  </Typography>
-                </Box>
+        <Card sx={{ flex: 1, minWidth: 200 }}>
+          <CardContent>
+            <Box display="flex" alignItems="center">
+              <CheckCircleIcon color="success" sx={{ mr: 1 }} />
+              <Box>
+                <Typography color="text.secondary" gutterBottom>
+                  Cumplimiento
+                </Typography>
+                <Typography variant="h4">
+                  {estadisticas.cumplimiento_plazos}%
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+            </Box>
+          </CardContent>
+        </Card>
         
-        <Grid item xs={12} sm={6} md={2}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center">
-                <FlagIcon color="warning" sx={{ mr: 1 }} />
-                <Box>
-                  <Typography color="text.secondary" gutterBottom>
-                    EE en Alerta
-                  </Typography>
-                  <Typography variant="h4">
-                    {estadisticas.establecimientos_alertas}
-                  </Typography>
-                </Box>
+        <Card sx={{ flex: 1, minWidth: 200 }}>
+          <CardContent>
+            <Box display="flex" alignItems="center">
+              <FlagIcon color="warning" sx={{ mr: 1 }} />
+              <Box>
+                <Typography color="text.secondary" gutterBottom>
+                  EE en Alerta
+                </Typography>
+                <Typography variant="h4">
+                  {estadisticas.establecimientos_alertas}
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+            </Box>
+          </CardContent>
+        </Card>
+      </Stack>
 
       {/* Tabs para diferentes vistas */}
       <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}>
@@ -496,11 +484,11 @@ function AntibullyingDashboardContent() {
           </Typography>
         </Alert>
         
-        <Grid container spacing={3}>
+        <Stack spacing={3} direction={{ xs: 'column', md: 'row' }} flexWrap="wrap">
           {denuncias
             .filter(d => d.requiere_denuncia_obligatoria)
             .map((denuncia) => (
-              <Grid item xs={12} md={6} key={denuncia.id}>
+              <Box key={denuncia.id} sx={{ flex: { md: '1 1 48%' }, minWidth: 300 }}>
                 <Card sx={{ border: '2px solid', borderColor: 'error.main' }}>
                   <CardContent>
                     <Box display="flex" justifyContent="space-between" alignItems="start" mb={2}>
@@ -558,9 +546,9 @@ function AntibullyingDashboardContent() {
                     </Box>
                   </CardContent>
                 </Card>
-              </Grid>
+              </Box>
             ))}
-        </Grid>
+        </Stack>
       </TabPanel>
 
       {/* Panel de Reportes Legales */}
@@ -569,46 +557,42 @@ function AntibullyingDashboardContent() {
           Reportes Obligatorios según Ley 20.536
         </Typography>
         
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Reporte Mensual MINEDUC
-                </Typography>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  Próximo envío: 30 de Noviembre, 2025
-                </Typography>
-                <LinearProgress variant="determinate" value={75} sx={{ mb: 2 }} />
-                <Button variant="outlined" size="small">
-                  Generar Reporte
-                </Button>
-              </CardContent>
-            </Card>
-          </Grid>
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+          <Card sx={{ flex: 1 }}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Reporte Mensual MINEDUC
+              </Typography>
+              <Typography variant="body2" color="text.secondary" gutterBottom>
+                Próximo envío: 30 de Noviembre, 2025
+              </Typography>
+              <LinearProgress variant="determinate" value={75} sx={{ mb: 2 }} />
+              <Button variant="outlined" size="small">
+                Generar Reporte
+              </Button>
+            </CardContent>
+          </Card>
           
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Cumplimiento de Plazos
-                </Typography>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  Investigaciones en plazo: {estadisticas.cumplimiento_plazos}%
-                </Typography>
-                <LinearProgress 
-                  variant="determinate" 
-                  value={estadisticas.cumplimiento_plazos} 
-                  color={estadisticas.cumplimiento_plazos > 90 ? "success" : "warning"}
-                  sx={{ mb: 2 }}
-                />
-                <Button variant="outlined" size="small">
-                  Ver Detalle
-                </Button>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+          <Card sx={{ flex: 1 }}>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Cumplimiento de Plazos
+              </Typography>
+              <Typography variant="body2" color="text.secondary" gutterBottom>
+                Investigaciones en plazo: {estadisticas.cumplimiento_plazos}%
+              </Typography>
+              <LinearProgress 
+                variant="determinate" 
+                value={estadisticas.cumplimiento_plazos} 
+                color={estadisticas.cumplimiento_plazos > 90 ? "success" : "warning"}
+                sx={{ mb: 2 }}
+              />
+              <Button variant="outlined" size="small">
+                Ver Detalle
+              </Button>
+            </CardContent>
+          </Card>
+        </Stack>
       </TabPanel>
 
       {/* Dialog de detalle de denuncia */}
@@ -622,29 +606,31 @@ function AntibullyingDashboardContent() {
               )}
             </DialogTitle>
             <DialogContent>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                  <Typography variant="h6" gutterBottom>Información General</Typography>
-                  <Typography><strong>Tipo:</strong> {selectedDenuncia.tipo_incidente}</Typography>
-                  <Typography><strong>Gravedad:</strong> {selectedDenuncia.gravedad}</Typography>
-                  <Typography><strong>Fecha Ocurrencia:</strong> {selectedDenuncia.fecha_ocurrencia}</Typography>
-                  <Typography><strong>Establecimiento:</strong> {selectedDenuncia.establecimiento}</Typography>
-                  <Typography><strong>Encargado:</strong> {selectedDenuncia.encargado_caso}</Typography>
-                </Grid>
+              <Stack spacing={3}>
+                <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="h6" gutterBottom>Información General</Typography>
+                    <Typography><strong>Tipo:</strong> {selectedDenuncia.tipo_incidente}</Typography>
+                    <Typography><strong>Gravedad:</strong> {selectedDenuncia.gravedad}</Typography>
+                    <Typography><strong>Fecha Ocurrencia:</strong> {selectedDenuncia.fecha_ocurrencia}</Typography>
+                    <Typography><strong>Establecimiento:</strong> {selectedDenuncia.establecimiento}</Typography>
+                    <Typography><strong>Encargado:</strong> {selectedDenuncia.encargado_caso}</Typography>
+                  </Box>
+                  
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="h6" gutterBottom>Involucrados</Typography>
+                    <Typography><strong>Víctimas:</strong> {selectedDenuncia.involucrados.victimas.join(', ')}</Typography>
+                    <Typography><strong>Agresores:</strong> {selectedDenuncia.involucrados.agresores.join(', ')}</Typography>
+                    <Typography><strong>Testigos:</strong> {selectedDenuncia.involucrados.testigos.join(', ')}</Typography>
+                  </Box>
+                </Stack>
                 
-                <Grid item xs={12} md={6}>
-                  <Typography variant="h6" gutterBottom>Involucrados</Typography>
-                  <Typography><strong>Víctimas:</strong> {selectedDenuncia.involucrados.victimas.join(', ')}</Typography>
-                  <Typography><strong>Agresores:</strong> {selectedDenuncia.involucrados.agresores.join(', ')}</Typography>
-                  <Typography><strong>Testigos:</strong> {selectedDenuncia.involucrados.testigos.join(', ')}</Typography>
-                </Grid>
-                
-                <Grid item xs={12}>
+                <Box>
                   <Typography variant="h6" gutterBottom>Descripción</Typography>
                   <Typography>{selectedDenuncia.descripcion}</Typography>
-                </Grid>
+                </Box>
                 
-                <Grid item xs={12}>
+                <Box>
                   <Typography variant="h6" gutterBottom>Seguimiento del Caso</Typography>
                   <List>
                     {selectedDenuncia.seguimientos.map((seg, index) => (
@@ -661,8 +647,8 @@ function AntibullyingDashboardContent() {
                       </ListItem>
                     ))}
                   </List>
-                </Grid>
-              </Grid>
+                </Box>
+              </Stack>
             </DialogContent>
             <DialogActions>
               <Button onClick={() => setDialogOpen(false)}>Cerrar</Button>
