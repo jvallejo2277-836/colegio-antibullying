@@ -19,9 +19,8 @@ from datetime import datetime, timedelta
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'colegio_api.settings')
 django.setup()
 
-from django.contrib.auth.models import User
 from core.models import (
-    Colegio, TipoIncidente, PerfilUsuario, MedidaFormativa, 
+    CustomUser, Colegio, TipoIncidente, PerfilUsuario, MedidaFormativa, 
     Sancion, IncidentReport, Evidence
 )
 
@@ -162,7 +161,7 @@ def create_usuarios(colegios):
     for data in usuarios_data:
         user_data = {k: v for k, v in data.items() 
                      if k in ['username', 'first_name', 'last_name', 'email']}
-        user, created = User.objects.get_or_create(
+        user, created = CustomUser.objects.get_or_create(
             username=data['username'],
             defaults=user_data
         )

@@ -1,6 +1,39 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 from datetime import timedelta
+
+
+class CustomUser(AbstractUser):
+    """Usuario personalizado con roles para el sistema antibullying"""
+    ROLE_CHOICES = [
+        ('sostenedor', 'Sostenedor'),
+        ('director', 'Director'),
+        ('encargado_convivencia', 'Encargado de Convivencia'),
+        ('admin', 'Administrador del Sistema'),
+    ]
+    
+    role = models.CharField(
+        max_length=25, 
+        choices=ROLE_CHOICES, 
+        default='encargado_convivencia'
+    )
+    colegio = models.ForeignKey(
+        'Colegio', 
+        on_delete=models.CASCADE, 
+        null=True, 
+        blank=True,
+        help_text="Colegio al que pertenece el usuario"
+    )
+    telefono = models.CharField(max_length=20, blank=True)
+    rut = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.get_full_name()} ({self.get_role_display()})"
+    
+    class Meta:
+        verbose_name = "Usuario"
+        verbose_name_plural = "Usuarios"
 
 
 class Colegio(models.Model):
@@ -73,7 +106,7 @@ class PerfilUsuario(models.Model):
         ('administrativo', 'Administrativo'),
     ]
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     colegio = models.ForeignKey(Colegio, on_delete=models.CASCADE)
     tipo_usuario = models.CharField(max_length=25, choices=TIPO_USUARIO_CHOICES)
     rut = models.CharField(max_length=12, blank=True)

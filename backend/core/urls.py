@@ -1,5 +1,6 @@
 from rest_framework import routers
 from django.urls import path, include
+from rest_framework_simplejwt.views import TokenRefreshView
 from .views import (
     ColegioViewSet,
     IncidentReportViewSet,
@@ -17,6 +18,15 @@ from .views import (
     EjecucionEtapaViewSet,
     ReglasAnonimatoViewSet,
     AccesoIdentidadViewSet,
+)
+from .auth_views import (
+    CustomTokenObtainPairView,
+    LoginView,
+    LogoutView,
+    UserProfileView,
+    RegisterView,
+    user_colegios,
+    check_auth,
 )
 
 router = routers.DefaultRouter()
@@ -41,4 +51,14 @@ urlpatterns = [
     path('', include(router.urls)),
     # Endpoint para métricas y dashboards
     path('graphs/', GraphsView.as_view(), name='graphs'),
+    
+    # Endpoints de autenticación JWT
+    path('auth/login/', LoginView.as_view(), name='login'),
+    path('auth/logout/', LogoutView.as_view(), name='logout'),
+    path('auth/register/', RegisterView.as_view(), name='register'),
+    path('auth/profile/', UserProfileView.as_view(), name='user-profile'),
+    path('auth/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('auth/colegios/', user_colegios, name='user-colegios'),
+    path('auth/check/', check_auth, name='check-auth'),
 ]

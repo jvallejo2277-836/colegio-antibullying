@@ -7,6 +7,9 @@ import {
   useNavigate,
   useLocation
 } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import { useAuth } from './contexts/AuthContext';
 import {
   ThemeProvider,
   createTheme,
@@ -22,11 +25,14 @@ import {
   ListItemText,
   Toolbar,
   Typography,
-  Collapse
+  Collapse,
+  Menu,
+  MenuItem
 } from '@mui/material';
 import {
   Menu as MenuIcon,
   Dashboard as DashboardIcon,
+  Logout as LogoutIcon,
   Settings as SettingsIcon,
   Report as ReportIcon,
   School as SchoolIcon,
@@ -88,13 +94,27 @@ const theme = createTheme({
 function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [mantenedoresOpen, setMantenedoresOpen] = React.useState(false);
   const [operacionesOpen, setOperacionesOpen] = React.useState(false);
   const [protocolosOpen, setProtocolosOpen] = React.useState(false);
+  const [mantenedoresAnchor, setMantenedoresAnchor] = React.useState<null | HTMLElement>(null);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleMantenedoresClick = (event: React.MouseEvent<HTMLElement>) => {
+    setMantenedoresAnchor(event.currentTarget);
+  };
+
+  const handleMantenedoresClose = () => {
+    setMantenedoresAnchor(null);
+  };
+
+  const handleMantenedoresNavigation = (path: string) => {
+    navigate(path);
+    handleMantenedoresClose();
   };
 
   const menuItems = [
@@ -104,7 +124,7 @@ function AppContent() {
       path: '/',
     },
     {
-      text: 'Sostenedores',
+      text: 'Colegios',
       icon: <BusinessIcon />,
       path: '/sostenedores',
     },
@@ -113,40 +133,7 @@ function AppContent() {
       icon: <WarningIcon />,
       path: '/antibullying',
     },
-    {
-      text: 'Mantenedores',
-      icon: <SettingsIcon />,
-      submenu: true,
-      open: mantenedoresOpen,
-      onClick: () => setMantenedoresOpen(!mantenedoresOpen),
-      children: [
-        {
-          text: 'Colegios',
-          icon: <SchoolIcon />,
-          path: '/mantenedores/colegios',
-        },
-        {
-          text: 'Tipos de Incidente',
-          icon: <CategoryIcon />,
-          path: '/mantenedores/tipos-incidente',
-        },
-        {
-          text: 'Usuarios',
-          icon: <PeopleIcon />,
-          path: '/mantenedores/usuarios',
-        },
-        {
-          text: 'Medidas Formativas',
-          icon: <PsychologyIcon />,
-          path: '/mantenedores/medidas-formativas',
-        },
-        {
-          text: 'Sanciones',
-          icon: <GavelIcon />,
-          path: '/mantenedores/sanciones',
-        },
-      ],
-    },
+
     {
       text: 'Operaciones',
       icon: <ReportIcon />,
@@ -289,9 +276,65 @@ function AppContent() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             Sistema de Convivencia Escolar - Chile
           </Typography>
+          
+          {/* Mantenedores, Usuario y Logout */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {/* Menú Mantenedores */}
+            <IconButton 
+              color="inherit" 
+              onClick={handleMantenedoresClick}
+              title="Mantenedores del Sistema"
+            >
+              <SettingsIcon />
+            </IconButton>
+            <Menu
+              anchorEl={mantenedoresAnchor}
+              open={Boolean(mantenedoresAnchor)}
+              onClose={handleMantenedoresClose}
+              sx={{ mt: 1 }}
+            >
+              <MenuItem onClick={() => handleMantenedoresNavigation('/mantenedores/colegios')}>
+                <ListItemIcon>
+                  <SchoolIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Colegios</ListItemText>
+              </MenuItem>
+              <MenuItem onClick={() => handleMantenedoresNavigation('/mantenedores/tipos-incidente')}>
+                <ListItemIcon>
+                  <CategoryIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Tipos de Incidente</ListItemText>
+              </MenuItem>
+              <MenuItem onClick={() => handleMantenedoresNavigation('/mantenedores/usuarios')}>
+                <ListItemIcon>
+                  <PeopleIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Usuarios</ListItemText>
+              </MenuItem>
+              <MenuItem onClick={() => handleMantenedoresNavigation('/mantenedores/medidas-formativas')}>
+                <ListItemIcon>
+                  <PsychologyIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Medidas Formativas</ListItemText>
+              </MenuItem>
+              <MenuItem onClick={() => handleMantenedoresNavigation('/mantenedores/sanciones')}>
+                <ListItemIcon>
+                  <GavelIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Sanciones</ListItemText>
+              </MenuItem>
+            </Menu>
+            
+            <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' } }}>
+              {user?.first_name} {user?.last_name} ({user?.role_display})
+            </Typography>
+            <IconButton color="inherit" onClick={logout} title="Cerrar Sesión">
+              <LogoutIcon />
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
       
@@ -373,9 +416,13 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
-        <AppContent />
-      </Router>
+      <AuthProvider>
+        <Router>
+          <ProtectedRoute>
+            <AppContent />
+          </ProtectedRoute>
+        </Router>
+      </AuthProvider>
     </ThemeProvider>
   );
 }

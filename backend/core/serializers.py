@@ -1,6 +1,8 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+from django.contrib.auth.password_validation import validate_password
 from .models import (
+    CustomUser,
     Colegio, IncidentReport, Evidence, TipoIncidente, 
     PerfilUsuario, MedidaFormativa, Sancion, ResolucionIncidente,
     ProtocoloProceso, EtapaProtocolo, ProcesoIncidente, EjecucionEtapa,
@@ -9,9 +11,9 @@ from .models import (
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Serializer básico para User"""
+    """Serializer básico para CustomUser"""
     class Meta:
-        model = User
+        model = CustomUser
         fields = ['id', 'username', 'first_name', 'last_name', 'email']
 
 
@@ -296,3 +298,72 @@ class IncidentReportDetailSerializer(IncidentReportSerializer):
             'solicita_anonimato', 'nivel_anonimato', 'justificacion_anonimato',
             'proceso', 'identidad_protegida', 'puede_ver_identidad'
         ]
+
+
+# =============================================================================
+# SERIALIZERS PARA AUTENTICACIÓN JWT
+# =============================================================================
+
+class CustomUserSerializer(serializers.ModelSerializer):
+    """Serializador para el modelo CustomUser"""
+    password = serializers.CharField(write_only=True, validators=[validate_password])
+    password_confirm = serializers.CharField(write_only=True)
+    
+    class Meta:
+        model = CustomUser
+        fields = (
+            'id', 'username', 'email', 'first_name', 'last_name', 
+            'role', 'colegio', 'telefono', 'rut', 'password', 'password_confirm'
+        )
+        extra_kwargs = {
+            'password': {'write_only': True},
+        }
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password_confirm']:
+            raise serializers.ValidationError("Las contraseñas no coinciden.")
+        return attrs
+
+    def create(self, validated_data):
+        validated_data.pop('password_confirm', None)
+        password = validated_data.pop('password')
+        user = CustomUser(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
+
+
+class LoginSerializer(serializers.Serializer):
+    """Serializador para el login"""
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, attrs):
+        username = attrs.get('username')
+        password = attrs.get('password')
+
+        if username and password:
+            user = authenticate(username=username, password=password)
+            if not user:
+                raise serializers.ValidationError('Credenciales inválidas.')
+            if not user.is_active:
+                raise serializers.ValidationError('Cuenta desactivada.')
+            attrs['user'] = user
+            return attrs
+        else:
+            raise serializers.ValidationError('Debe proporcionar username y password.')
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    """Serializador para el perfil del usuario"""
+    colegio_name = serializers.CharField(source='colegio.nombre', read_only=True)
+    role_display = serializers.CharField(source='get_role_display', read_only=True)
+    
+    class Meta:
+        model = CustomUser
+        fields = (
+            'id', 'username', 'email', 'first_name', 'last_name', 
+            'role', 'role_display', 'colegio', 'colegio_name', 
+            'telefono', 'rut', 'date_joined', 'last_login'
+        )
+        read_only_fields = ('id', 'username', 'date_joined', 'last_login')
