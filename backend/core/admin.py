@@ -5,7 +5,10 @@ de incidentes y evidencias en el panel de administración.
 """
 
 from django.contrib import admin
-from .models import Colegio, IncidentReport, Evidence
+from .models import (
+    Colegio, IncidentReport, Evidence, TipoIncidente, 
+    PerfilUsuario, MedidaFormativa, Sancion, ResolucionIncidente
+)
 
 
 class EvidenceInline(admin.TabularInline):
@@ -55,6 +58,44 @@ class EvidenceAdmin(admin.ModelAdmin):
     search_fields = ('descripcion', 'reporte__titulo')
 
 
+# Configuraciones adicionales de admin para los nuevos modelos
+
+class TipoIncidenteAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'categoria', 'gravedad', 'requiere_denuncia')
+    list_filter = ('categoria', 'gravedad', 'requiere_denuncia')
+    search_fields = ('nombre', 'descripcion')
+
+
+class PerfilUsuarioAdmin(admin.ModelAdmin):
+    list_display = ('user', 'tipo_usuario', 'colegio', 'rut', 'curso')
+    list_filter = ('tipo_usuario', 'colegio')
+    search_fields = ('user__username', 'user__first_name', 'user__last_name', 'rut')
+
+
+class MedidaFormativaAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'tipo', 'duracion_estimada_horas')
+    list_filter = ('tipo',)
+    search_fields = ('nombre', 'descripcion')
+
+
+class SancionAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'tipo', 'dias_duracion')
+    list_filter = ('tipo',)
+    search_fields = ('nombre', 'descripcion')
+
+
+class ResolucionIncidenteAdmin(admin.ModelAdmin):
+    list_display = ('incidente', 'fecha_resolucion', 'resuelto_por', 'requiere_seguimiento')
+    list_filter = ('requiere_seguimiento', 'fecha_resolucion')
+    filter_horizontal = ('medidas_formativas', 'sanciones')
+
+
+# Registrar todos los modelos
 admin.site.register(Colegio, ColegioAdmin)
 admin.site.register(IncidentReport, IncidentReportAdmin)
 admin.site.register(Evidence, EvidenceAdmin)
+admin.site.register(TipoIncidente, TipoIncidenteAdmin)
+admin.site.register(PerfilUsuario, PerfilUsuarioAdmin)
+admin.site.register(MedidaFormativa, MedidaFormativaAdmin)
+admin.site.register(Sancion, SancionAdmin)
+admin.site.register(ResolucionIncidente, ResolucionIncidenteAdmin)

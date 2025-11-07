@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Convivencia Escolar - Protocolos Flexibles</title>
+    <link href="https://cdn.jsdelivr.net/npm/@mui/material@5.14.0/umd/material-ui.development.js" rel="preload">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .app-bar {
+            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .app-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .alert {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .alert h3 {
+            color: #1976d2;
+            margin-bottom: 0.5rem;
+        }
+        
+        .protocol-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #1565c0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .protocols-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .protocol-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .protocol-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        
+        .protocol-header-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .protocol-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            margin: 0 0 0.5rem 0;
+            color: #1976d2;
+        }
+        
+        .severity-chip {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .severity-leve {
+            background: #e8f5e8;
+            color: #2e7d2e;
+        }
+        
+        .severity-moderada {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+        
+        .severity-grave {
+            background: #ffebee;
+            color: #d32f2f;
+        }
+        
+        .protocol-description {
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .protocol-stats {
+            display: flex;
+            gap: 2rem;
+            margin: 1rem 0;
+            padding: 1rem 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #1976d2;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #666;
+        }
+        
+        .protocol-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #1976d2;
+            border: 1px solid #1976d2;
+        }
+        
+        .btn-outline:hover {
+            background: #1976d2;
+            color: white;
+        }
+        
+        .features-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .features-title {
+            color: #1976d2;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-item {
+            margin-bottom: 0.75rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .feature-item::before {
+            content: "•";
+            color: #1976d2;
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+        }
+        
+        .highlight {
+            font-weight: 500;
+            color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <header class="app-bar">
+        <h1 class="app-title">Sistema de Convivencia Escolar - Protocolos Flexibles</h1>
+    </header>
+
+    <div class="container">
+        <div class="alert">
+            <h3>🎉 Protocolos Flexibles - Sistema Implementado</h3>
+            <p>
+                Esta es una demostración del sistema de protocolos flexibles completamente implementado. 
+                El backend Django está funcionando en <strong>http://127.0.0.1:8000</strong> con 6 nuevos modelos,
+                14 endpoints API y sistema de anonimato controlado.
+            </p>
+        </div>
+
+        <div class="protocol-header">
+            <h2>Dashboard de Protocolos (3 Configurados)</h2>
+            <button class="btn" onclick="showDemo('Crear Nuevo Protocolo')">
+                ➕ Nuevo Protocolo
+            </button>
+        </div>
+
+        <div class="protocols-grid">
+            <!-- Protocolo Leve -->
+            <div class="protocol-card">
+                <div class="protocol-header-card">
+                    <div>
+                        <h3 class="protocol-title">Protocolo de Acoso Verbal Leve</h3>
+                        <span class="severity-chip severity-leve">Leve</span>
+                    </div>
+                </div>
+                <p class="protocol-description">
+                    Protocolo para situaciones de acoso verbal de baja intensidad, como burlas ocasionales o comentarios inapropiados.
+                </p>
+                <div class="protocol-stats">
+                    <div class="stat">
+                        <div class="stat-value">15</div>
+                        <div class="stat-label">Días</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">3</div>
+                        <div class="stat-label">Etapas</div>
+                    </div>
+                </div>
+                <div class="protocol-actions">
+                    <button class="btn btn-outline" onclick="showDemo('Ver Etapas - Protocolo Leve')">
+                        📋 Ver Etapas
+                    </button>
+                    <button class="btn btn-outline" onclick="showDemo('Editar - Protocolo Leve')">
+                        ✏️ Editar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Protocolo Moderado -->
+            <div class="protocol-card">
+                <div class="protocol-header-card">
+                    <div>
+                        <h3 class="protocol-title">Protocolo de Agresión Física Moderada</h3>
+                        <span class="severity-chip severity-moderada">Moderada</span>
+                    </div>
+                </div>
+                <p class="protocol-description">
+                    Protocolo para casos de agresión física sin lesiones graves, empujones o peleas menores.
+                </p>
+                <div class="protocol-stats">
+                    <div class="stat">
+                        <div class="stat-value">30</div>
+                        <div class="stat-label">Días</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">5</div>
+                        <div class="stat-label">Etapas</div>
+                    </div>
+                </div>
+                <p style="margin: 0.5rem 0; font-size: 0.875rem; color: #1976d2;">
+                    ✅ Requiere aprobación del director
+                </p>
+                <div class="protocol-actions">
+                    <button class="btn btn-outline" onclick="showDemo('Ver Etapas - Protocolo Moderado')">
+                        📋 Ver Etapas
+                    </button>
+                    <button class="btn btn-outline" onclick="showDemo('Editar - Protocolo Moderado')">
+                        ✏️ Editar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Protocolo Grave -->
+            <div class="protocol-card">
+                <div class="protocol-header-card">
+                    <div>
+                        <h3 class="protocol-title">Protocolo de Bullying Sistemático Grave</h3>
+                        <span class="severity-chip severity-grave">Grave</span>
+                    </div>
+                </div>
+                <p class="protocol-description">
+                    Protocolo para situaciones de acoso sistemático, cyberbullying persistente o discriminación grave.
+                </p>
+                <div class="protocol-stats">
+                    <div class="stat">
+                        <div class="stat-value">45</div>
+                        <div class="stat-label">Días</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">7</div>
+                        <div class="stat-label">Etapas</div>
+                    </div>
+                </div>
+                <p style="margin: 0.5rem 0; font-size: 0.875rem; color: #1976d2;">
+                    ✅ Requiere aprobación del director
+                </p>
+                <div class="protocol-actions">
+                    <button class="btn btn-outline" onclick="showDemo('Ver Etapas - Protocolo Grave')">
+                        📋 Ver Etapas
+                    </button>
+                    <button class="btn btn-outline" onclick="showDemo('Editar - Protocolo Grave')">
+                        ✏️ Editar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-section">
+            <h3 class="features-title">🚀 Funcionalidades Implementadas del Sistema</h3>
+            <ul class="feature-list">
+                <li class="feature-item">
+                    <span class="highlight">Protocolos Configurables:</span> Sistema flexible vs. rígido anterior (3/7 etapas fijas)
+                </li>
+                <li class="feature-item">
+                    <span class="highlight">Etapas Personalizables:</span> Configure N etapas con plazos y responsables específicos
+                </li>
+                <li class="feature-item">
+                    <span class="highlight">Control de Anonimato:</span> Gestión granular por rol y etapa del proceso
+                </li>
+                <li class="feature-item">
+                    <span class="highlight">Seguimiento en Tiempo Real:</span> Timeline con estado de cada etapa y responsables
+                </li>
+                <li class="feature-item">
+                    <span class="highlight">Backend Completo:</span> Django + DRF con 6 modelos nuevos y 14 endpoints API
+                </li>
+                <li class="feature-item">
+                    <span class="highlight">Base de Datos:</span> Migración 0002_add_protocolos_anonimato aplicada exitosamente
+                </li>
+            </ul>
+            
+            <div style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                <p><strong>🔗 APIs Disponibles:</strong></p>
+                <p style="margin: 0.5rem 0; font-family: monospace; font-size: 0.875rem;">
+                    • <a href="http://127.0.0.1:8000/api/protocolos/" target="_blank">http://127.0.0.1:8000/api/protocolos/</a><br>
+                    • <a href="http://127.0.0.1:8000/api/etapas/" target="_blank">http://127.0.0.1:8000/api/etapas/</a><br>
+                    • <a href="http://127.0.0.1:8000/api/procesos/" target="_blank">http://127.0.0.1:8000/api/procesos/</a><br>
+                    • <a href="http://127.0.0.1:8000/api/anonimato/" target="_blank">http://127.0.0.1:8000/api/anonimato/</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showDemo(action) {
+            alert(`🎮 Función Demo: ${action}\n\n✅ Backend Django funcionando en puerto 8000\n⚡ API REST completamente implementada\n🔒 Sistema de anonimato controlado\n📊 Base de datos con 6 nuevos modelos\n\n🚀 Esta funcionalidad estará disponible en la versión completa del frontend React.`);
+        }
+
+        // Efecto de animación suave al cargar
+        window.addEventListener('load', function() {
+            const cards = document.querySelectorAll('.protocol-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'all 0.5s ease';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

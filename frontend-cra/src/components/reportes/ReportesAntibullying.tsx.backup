@@ -1,0 +1,458 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  CardHeader,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Chip,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Alert,
+  Divider
+} from '@mui/material';
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
+import {
+  Assessment,
+  TrendingUp,
+  Warning,
+  CheckCircle,
+  Schedule,
+  Person,
+  School,
+  Download
+} from '@mui/icons-material';
+
+interface ReporteStats {
+  totalDenuncias: number;
+  denunciasAbiertas: number;
+  denunciasCerradas: number;
+  promedioResolucion: number;
+  casosCriticos: number;
+  cumplimientoLey: number;
+}
+
+interface DenunciaPorMes {
+  mes: string;
+  cantidad: number;
+  resueltas: number;
+}
+
+interface DenunciaPorTipo {
+  tipo: string;
+  cantidad: number;
+  porcentaje: number;
+  color: string;
+  [key: string]: any; // Para compatibilidad con Recharts
+}
+
+const ReportesAntibullying: React.FC = () => {
+  const [periodo, setPeriodo] = useState('mes');
+  const [año, setAño] = useState(new Date().getFullYear());
+  const [loading, setLoading] = useState(false);
+
+  // Datos de ejemplo (en producción vendrían del backend)
+  const [stats, setStats] = useState<ReporteStats>({
+    totalDenuncias: 47,
+    denunciasAbiertas: 8,
+    denunciasCerradas: 39,
+    promedioResolucion: 3.2,
+    casosCriticos: 2,
+    cumplimientoLey: 98.5
+  });
+
+  const dataPorMes: DenunciaPorMes[] = [
+    { mes: 'Ene', cantidad: 5, resueltas: 4 },
+    { mes: 'Feb', cantidad: 3, resueltas: 3 },
+    { mes: 'Mar', cantidad: 8, resueltas: 7 },
+    { mes: 'Abr', cantidad: 6, resueltas: 5 },
+    { mes: 'May', cantidad: 4, resueltas: 4 },
+    { mes: 'Jun', cantidad: 7, resueltas: 6 },
+    { mes: 'Jul', cantidad: 2, resueltas: 2 },
+    { mes: 'Ago', cantidad: 9, resueltas: 8 },
+    { mes: 'Sep', cantidad: 3, resueltas: 0 }
+  ];
+
+  const dataPorTipo: DenunciaPorTipo[] = [
+    { tipo: 'Violencia Física', cantidad: 18, porcentaje: 38.3, color: '#f44336' },
+    { tipo: 'Violencia Psicológica', cantidad: 15, porcentaje: 31.9, color: '#ff9800' },
+    { tipo: 'Ciberacoso', cantidad: 8, porcentaje: 17.0, color: '#2196f3' },
+    { tipo: 'Discriminación', cantidad: 4, porcentaje: 8.5, color: '#9c27b0' },
+    { tipo: 'Otros', cantidad: 2, porcentaje: 4.3, color: '#4caf50' }
+  ];
+
+  const casosRecientes = [
+    {
+      id: 'D-2024-047',
+      fecha: '2024-11-05',
+      tipo: 'Violencia Física',
+      estado: 'En Investigación',
+      plazo: '1 día restante',
+      prioridad: 'Alta'
+    },
+    {
+      id: 'D-2024-046',
+      fecha: '2024-11-03',
+      tipo: 'Ciberacoso',
+      estado: 'Resuelto',
+      plazo: 'Completado',
+      prioridad: 'Media'
+    },
+    {
+      id: 'D-2024-045',
+      fecha: '2024-11-01',
+      tipo: 'Violencia Psicológica',
+      estado: 'En Mediación',
+      plazo: '3 días restantes',
+      prioridad: 'Media'
+    }
+  ];
+
+  const getPrioridadColor = (prioridad: string) => {
+    switch (prioridad) {
+      case 'Alta': return 'error';
+      case 'Media': return 'warning';
+      case 'Baja': return 'success';
+      default: return 'default';
+    }
+  };
+
+  const getEstadoColor = (estado: string) => {
+    switch (estado) {
+      case 'Resuelto': return 'success';
+      case 'En Investigación': return 'error';
+      case 'En Mediación': return 'warning';
+      default: return 'default';
+    }
+  };
+
+  const exportarReporte = () => {
+    // Implementar exportación a PDF/Excel
+    alert('Exportando reporte... (función en desarrollo)');
+  };
+
+  return (
+    <Box sx={{ p: 3 }}>
+      {/* Header */}
+      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold' }}>
+          📊 Reportes y Estadísticas Antibullying
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <FormControl size="small" sx={{ minWidth: 120 }}>
+            <InputLabel>Período</InputLabel>
+            <Select
+              value={periodo}
+              label="Período"
+              onChange={(e) => setPeriodo(e.target.value)}
+            >
+              <MenuItem value="mes">Este Mes</MenuItem>
+              <MenuItem value="trimestre">Trimestre</MenuItem>
+              <MenuItem value="año">Año Completo</MenuItem>
+            </Select>
+          </FormControl>
+          <Button
+            variant="contained"
+            startIcon={<Download />}
+            onClick={exportarReporte}
+          >
+            Exportar Reporte
+          </Button>
+        </Box>
+      </Box>
+
+      {/* Tarjetas de Estadísticas Principales */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={6} md={2}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <Assessment sx={{ color: 'primary.main', mr: 1 }} />
+                <Typography variant="h6">{stats.totalDenuncias}</Typography>
+              </Box>
+              <Typography variant="body2" color="text.secondary">
+                Total Denuncias
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={2}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <Warning sx={{ color: 'warning.main', mr: 1 }} />
+                <Typography variant="h6">{stats.denunciasAbiertas}</Typography>
+              </Box>
+              <Typography variant="body2" color="text.secondary">
+                Casos Abiertos
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={2}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <CheckCircle sx={{ color: 'success.main', mr: 1 }} />
+                <Typography variant="h6">{stats.denunciasCerradas}</Typography>
+              </Box>
+              <Typography variant="body2" color="text.secondary">
+                Casos Resueltos
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={2}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <Schedule sx={{ color: 'info.main', mr: 1 }} />
+                <Typography variant="h6">{stats.promedioResolucion}</Typography>
+              </Box>
+              <Typography variant="body2" color="text.secondary">
+                Días Promedio
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={2}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <TrendingUp sx={{ color: 'success.main', mr: 1 }} />
+                <Typography variant="h6">{stats.cumplimientoLey}%</Typography>
+              </Box>
+              <Typography variant="body2" color="text.secondary">
+                Cumplimiento Ley
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={2}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                <Warning sx={{ color: 'error.main', mr: 1 }} />
+                <Typography variant="h6">{stats.casosCriticos}</Typography>
+              </Box>
+              <Typography variant="body2" color="text.secondary">
+                Casos Críticos
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* Alerta de Cumplimiento Legal */}
+      {stats.cumplimientoLey >= 95 ? (
+        <Alert severity="success" sx={{ mb: 3 }}>
+          ✅ Cumplimiento excelente de la Ley 20.536. Todos los reportes obligatorios están al día.
+        </Alert>
+      ) : (
+        <Alert severity="warning" sx={{ mb: 3 }}>
+          ⚠️ Atención: Hay {stats.casosCriticos} casos que requieren seguimiento urgente según Ley 20.536.
+        </Alert>
+      )}
+
+      {/* Gráficos */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {/* Gráfico de Tendencia Mensual */}
+        <Grid item xs={12} md={8}>
+          <Card>
+            <CardHeader title="📈 Tendencia de Denuncias por Mes" />
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={dataPorMes}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="mes" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="cantidad" fill="#2196f3" name="Total Denuncias" />
+                  <Bar dataKey="resueltas" fill="#4caf50" name="Resueltas" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Gráfico de Tipos de Violencia */}
+        <Grid item xs={12} md={4}>
+          <Card>
+            <CardHeader title="🎯 Tipos de Violencia" />
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={dataPorTipo}
+                    dataKey="cantidad"
+                    nameKey="tipo"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    label={({ porcentaje }) => `${porcentaje}%`}
+                  >
+                    {dataPorTipo.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+              <Box sx={{ mt: 2 }}>
+                {dataPorTipo.map((item, index) => (
+                  <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <Box
+                      sx={{
+                        width: 12,
+                        height: 12,
+                        backgroundColor: item.color,
+                        borderRadius: '50%',
+                        mr: 1
+                      }}
+                    />
+                    <Typography variant="body2" sx={{ flex: 1 }}>
+                      {item.tipo}
+                    </Typography>
+                    <Typography variant="body2" fontWeight="bold">
+                      {item.cantidad}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* Tabla de Casos Recientes */}
+      <Card>
+        <CardHeader title="📋 Casos Recientes Requiriendo Atención" />
+        <CardContent>
+          <TableContainer component={Paper} variant="outlined">
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell><strong>ID Caso</strong></TableCell>
+                  <TableCell><strong>Fecha</strong></TableCell>
+                  <TableCell><strong>Tipo</strong></TableCell>
+                  <TableCell><strong>Estado</strong></TableCell>
+                  <TableCell><strong>Plazo Legal</strong></TableCell>
+                  <TableCell><strong>Prioridad</strong></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {casosRecientes.map((caso) => (
+                  <TableRow key={caso.id} hover>
+                    <TableCell>
+                      <Typography variant="body2" fontWeight="bold">
+                        {caso.id}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>{caso.fecha}</TableCell>
+                    <TableCell>{caso.tipo}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={caso.estado}
+                        color={getEstadoColor(caso.estado) as any}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>{caso.plazo}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={caso.prioridad}
+                        color={getPrioridadColor(caso.prioridad) as any}
+                        size="small"
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </CardContent>
+      </Card>
+
+      {/* Sección de Reportes Obligatorios */}
+      <Card sx={{ mt: 3 }}>
+        <CardHeader title="📄 Reportes Obligatorios Ley 20.536" />
+        <CardContent>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={4}>
+              <Button
+                variant="outlined"
+                fullWidth
+                startIcon={<Assessment />}
+                sx={{ mb: 1 }}
+              >
+                Reporte Mensual MINEDUC
+              </Button>
+              <Typography variant="caption" color="text.secondary">
+                Último envío: 01/11/2024
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Button
+                variant="outlined"
+                fullWidth
+                startIcon={<School />}
+                sx={{ mb: 1 }}
+              >
+                Informe Superintendencia
+              </Button>
+              <Typography variant="caption" color="text.secondary">
+                Próximo envío: 15/11/2024
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Button
+                variant="outlined"
+                fullWidth
+                startIcon={<Person />}
+                sx={{ mb: 1 }}
+              >
+                Reporte Apoderados
+              </Button>
+              <Typography variant="caption" color="text.secondary">
+                Generación automática
+              </Typography>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+    </Box>
+  );
+};
+
+export default ReportesAntibullying;
