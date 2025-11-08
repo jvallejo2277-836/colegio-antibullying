@@ -18,3 +18,11 @@ node_modules/
 staticfiles/
 .DS_Store
 Thumbs.db
+
+# Carpetas obsoletas y problemáticas
+frontend-react/
+frontend/
+frontend-html/
+frontend_local_backup_*/
+docs_local_backup_*/
+.vite/

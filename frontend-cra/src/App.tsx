@@ -8,7 +8,11 @@ import {
   useLocation
 } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { ColegioProvider } from './context/ColegioContext';
+import { useColegio } from './context/ColegioContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import SelectorColegioActivo from './components/common/SelectorColegioActivo';
+import ColegioSelector from './components/common/ColegioSelector';
 import { useAuth } from './contexts/AuthContext';
 import {
   ThemeProvider,
@@ -54,19 +58,21 @@ import {
 // Componentes
 import Dashboard from './components/DashboardSimple';
 import ProtocolosDashboard from './components/protocolos/ProtocolosDashboard';
-import SostenedoresDashboard from './components/sostenedores/SostenedoresDashboard';
 import AntibullyingDashboard from './components/antibullying/AntibullyingDashboard';
 import ReportesAntibullying from './components/reportes/ReportesAntibullying';
+import ReportarIncidente from './components/reportes/ReportarIncidente';
+import ColegiosManager from './components/mantenedores/ColegiosManager';
 
 // Componentes placeholder para mantenedores
-const ColegiosManager = () => <div><h2>Gestión de Colegios</h2><p>Mantenedor de colegios en desarrollo...</p></div>;
-const TiposIncidenteManager = () => <div><h2>Tipos de Incidente</h2><p>Mantenedor de tipos de incidente en desarrollo...</p></div>;
+// Importar componentes de mantenedores
+import TiposIncidenteManager from './components/mantenedores/TiposIncidenteManager';
+
+// Componentes placeholder para otros mantenedores
 const UsuariosManager = () => <div><h2>Gestión de Usuarios</h2><p>Mantenedor de usuarios en desarrollo...</p></div>;
 const MedidasFormativasManager = () => <div><h2>Medidas Formativas</h2><p>Mantenedor de medidas formativas en desarrollo...</p></div>;
 const SancionesManager = () => <div><h2>Sanciones</h2><p>Mantenedor de sanciones en desarrollo...</p></div>;
 
 // Componentes placeholder para operaciones
-const ReportarIncidente = () => <div><h2>Reportar Incidente</h2><p>Formulario para reportar incidentes en desarrollo...</p></div>;
 const GestionReportes = () => <div><h2>Gestión de Reportes</h2><p>Sistema de gestión de reportes en desarrollo...</p></div>;
 const ReportesUrgentes = () => <div><h2>Reportes Urgentes</h2><p>Vista de reportes urgentes en desarrollo...</p></div>;
 
@@ -95,10 +101,21 @@ function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { colegioActivo, colegiosDisponibles, necesitaSeleccionColegio } = useColegio();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [operacionesOpen, setOperacionesOpen] = React.useState(false);
   const [protocolosOpen, setProtocolosOpen] = React.useState(false);
   const [mantenedoresAnchor, setMantenedoresAnchor] = React.useState<null | HTMLElement>(null);
+  const [mostrarSelectorColegio, setMostrarSelectorColegio] = React.useState(false);
+
+  // Mostrar selector si el usuario necesita seleccionar colegio
+  React.useEffect(() => {
+    if (necesitaSeleccionColegio) {
+      setMostrarSelectorColegio(true);
+    } else {
+      setMostrarSelectorColegio(false);
+    }
+  }, [necesitaSeleccionColegio]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -122,11 +139,6 @@ function AppContent() {
       text: 'Dashboard',
       icon: <DashboardIcon />,
       path: '/',
-    },
-    {
-      text: 'Colegios',
-      icon: <BusinessIcon />,
-      path: '/sostenedores',
     },
     {
       text: 'Antibullying',
@@ -280,6 +292,9 @@ function AppContent() {
             Sistema de Convivencia Escolar - Chile
           </Typography>
           
+          {/* Selector de Colegio Activo */}
+          <ColegioSelector />
+          
           {/* Mantenedores, Usuario y Logout */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             {/* Menú Mantenedores */}
@@ -329,7 +344,7 @@ function AppContent() {
             </Menu>
             
             <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' } }}>
-              {user?.first_name} {user?.last_name} ({user?.role_display})
+              {user?.username} - {user?.role_display}
             </Typography>
             <IconButton color="inherit" onClick={logout} title="Cerrar Sesión">
               <LogoutIcon />
@@ -380,9 +395,6 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           
-          {/* Ruta de Sostenedores */}
-          <Route path="/sostenedores" element={<SostenedoresDashboard />} />
-          
           {/* Ruta de Antibullying */}
           <Route path="/antibullying" element={<AntibullyingDashboard />} />
           
@@ -408,6 +420,12 @@ function AppContent() {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Box>
+      
+      {/* Selector de Colegio Activo */}
+      <SelectorColegioActivo 
+        open={mostrarSelectorColegio} 
+        onClose={() => setMostrarSelectorColegio(false)}
+      />
     </Box>
   );
 }
@@ -417,11 +435,13 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
-        <Router>
-          <ProtectedRoute>
-            <AppContent />
-          </ProtectedRoute>
-        </Router>
+        <ColegioProvider>
+          <Router>
+            <ProtectedRoute>
+              <AppContent />
+            </ProtectedRoute>
+          </Router>
+        </ColegioProvider>
       </AuthProvider>
     </ThemeProvider>
   );

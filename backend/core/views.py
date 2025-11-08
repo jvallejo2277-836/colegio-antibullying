@@ -86,8 +86,68 @@ class ColegioViewSet(viewsets.ModelViewSet):
 class TipoIncidenteViewSet(viewsets.ModelViewSet):
     queryset = TipoIncidente.objects.all()
     serializer_class = TipoIncidenteSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['categoria', 'gravedad', 'requiere_denuncia']
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['categoria', 'gravedad', 'requiere_denuncia', 'es_categoria_legal', 'colegio', 'activo']
+    search_fields = ['nombre', 'descripcion']
+
+    def get_queryset(self):
+        """Filtrar tipos de incidente según el contexto del usuario"""
+        queryset = super().get_queryset()
+        
+        # Si el usuario especifica un colegio en los parámetros
+        colegio_id = self.request.query_params.get('colegio', None)
+        if colegio_id:
+            # Incluir tipos legales (sin colegio específico) + tipos del colegio específico
+            queryset = queryset.filter(
+                Q(colegio__isnull=True) | Q(colegio_id=colegio_id)
+            )
+        
+        return queryset.filter(activo=True).order_by('categoria', 'nombre')
+
+    def perform_create(self, serializer):
+        """Personalizar creación de tipos de incidente"""
+        # Si no se especifica colegio, usar el del usuario actual (si no es admin)
+        if not serializer.validated_data.get('colegio') and hasattr(self.request.user, 'colegio'):
+            if not self.request.user.puede_ver_todos_colegios:
+                serializer.save(colegio=self.request.user.colegio)
+            else:
+                serializer.save()
+        else:
+            serializer.save()
+
+    def perform_destroy(self, instance):
+        """Prevenir eliminación de categorías legales o tipos con incidentes"""
+        if not instance.puede_eliminar:
+            from rest_framework.exceptions import ValidationError
+            if instance.es_categoria_legal:
+                raise ValidationError("No se pueden eliminar las categorías definidas por ley")
+            else:
+                raise ValidationError("No se puede eliminar un tipo que tiene incidentes reportados")
+        
+        # Soft delete en lugar de eliminación real
+        instance.activo = False
+        instance.save()
+
+    @action(detail=False, methods=['get'])
+    def categorias_legales(self, request):
+        """Endpoint para obtener solo las categorías legales"""
+        legales = self.get_queryset().filter(es_categoria_legal=True)
+        serializer = self.get_serializer(legales, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def por_colegio(self, request):
+        """Endpoint para obtener tipos de incidente de un colegio específico"""
+        colegio_id = request.query_params.get('colegio_id')
+        if not colegio_id:
+            return Response({'error': 'colegio_id es requerido'}, status=400)
+        
+        # Tipos legales + tipos específicos del colegio
+        tipos = self.get_queryset().filter(
+            Q(colegio__isnull=True) | Q(colegio_id=colegio_id)
+        )
+        serializer = self.get_serializer(tipos, many=True)
+        return Response(serializer.data)
 
 
 class PerfilUsuarioViewSet(viewsets.ModelViewSet):
@@ -128,6 +188,21 @@ class IncidentReportViewSet(viewsets.ModelViewSet):
         if self.action == 'list':
             return IncidentReportListSerializer
         return IncidentReportSerializer
+    
+    def perform_create(self, serializer):
+        """Asignar automáticamente el reportero basado en el usuario autenticado"""
+        # Si el usuario está autenticado, buscar su perfil
+        if self.request.user.is_authenticated:
+            try:
+                from core.models import PerfilUsuario
+                reportero = PerfilUsuario.objects.get(user=self.request.user)
+                serializer.save(reportero=reportero)
+            except PerfilUsuario.DoesNotExist:
+                # Si no tiene perfil, crear reporte sin reportero (reporte externo)
+                serializer.save()
+        else:
+            # Usuario anónimo
+            serializer.save()
     
     @action(detail=True, methods=['post'])
     def cambiar_estado(self, request, pk=None):
@@ -367,3 +442,9 @@ class AccesoIdentidadViewSet(viewsets.ModelViewSet):
         acceso = self.get_object()
         acceso.registrar_acceso()
         return Response({'accesos': acceso.numero_accesos})
+
+
+# =============================================================================
+# VIEWSETS PARA GESTIÓN DE USUARIOS Y SOSTENEDORES
+# =============================================================================
+

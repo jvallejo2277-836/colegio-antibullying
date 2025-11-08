@@ -10,6 +10,11 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
 
+  // Permitir acceso directo al formulario de reportar incidentes para testing
+  if (window.location.pathname === '/operaciones/reportar') {
+    return <>{children}</>;
+  }
+
   // Mostrar loading mientras se verifica la autenticación
   if (loading) {
     return (

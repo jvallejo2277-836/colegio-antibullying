@@ -7,10 +7,15 @@ from datetime import timedelta
 class CustomUser(AbstractUser):
     """Usuario personalizado con roles para el sistema antibullying"""
     ROLE_CHOICES = [
+        ('admin', 'Administrador del Sistema'),
         ('sostenedor', 'Sostenedor'),
         ('director', 'Director'),
-        ('encargado_convivencia', 'Encargado de Convivencia'),
-        ('admin', 'Administrador del Sistema'),
+        ('encargado_convivencia', 'Encargado de Convivencia Escolar'),
+        ('inspector', 'Inspector General'),
+        ('profesor', 'Profesor'),
+        ('orientador', 'Orientador'),
+        ('apoderado', 'Apoderado'),
+        ('auxiliar', 'Personal de Apoyo/Auxiliar'),
     ]
     
     role = models.CharField(
@@ -23,13 +28,58 @@ class CustomUser(AbstractUser):
         on_delete=models.CASCADE, 
         null=True, 
         blank=True,
-        help_text="Colegio al que pertenece el usuario"
+        help_text="Colegio al que pertenece el usuario (para roles de colegio específico)"
     )
     telefono = models.CharField(max_length=20, blank=True)
     rut = models.CharField(max_length=20, unique=True, null=True, blank=True)
     
     def __str__(self):
         return f"{self.get_full_name()} ({self.get_role_display()})"
+    
+    @property
+    def es_admin(self):
+        """Verifica si el usuario es administrador del sistema"""
+        return self.role == 'admin'
+    
+    @property
+    def es_sostenedor(self):
+        """Verifica si el usuario es sostenedor"""
+        return self.role == 'sostenedor'
+    
+    @property
+    def puede_ver_todos_colegios(self):
+        """Verifica si el usuario puede ver datos de todos los colegios"""
+        return self.role in ['admin', 'sostenedor']
+    
+    @property
+    def puede_crear_reportes(self):
+        """Verifica si el usuario puede crear reportes de incidentes"""
+        return self.role in ['encargado_convivencia', 'inspector', 'profesor', 'director']
+    
+    @property
+    def puede_gestionar_usuarios(self):
+        """Verifica si el usuario puede gestionar otros usuarios"""
+        return self.role in ['admin', 'director']
+    
+    @property
+    def puede_gestionar_protocolos(self):
+        """Verifica si el usuario puede gestionar protocolos y procedimientos"""
+        return self.role in ['admin', 'director', 'encargado_convivencia']
+    
+    @property
+    def puede_ver_reportes_confidenciales(self):
+        """Verifica si puede ver reportes con información confidencial"""
+        return self.role in ['admin', 'director', 'encargado_convivencia']
+    
+    def get_colegios_permitidos(self):
+        """Retorna los colegios a los que el usuario tiene acceso"""
+        if self.es_admin:
+            return Colegio.objects.all()
+        elif self.colegio:
+            # Usuarios de colegio específico
+            return Colegio.objects.filter(id=self.colegio.id)
+        else:
+            return Colegio.objects.none()
     
     class Meta:
         verbose_name = "Usuario"
@@ -58,7 +108,7 @@ class Colegio(models.Model):
 
 
 class TipoIncidente(models.Model):
-    """Tipos de incidentes según Ley 20.536 y normativas MINEDUC"""
+    """Tipos de incidentes - Sistema híbrido: categorías legales fijas + personalizables por colegio"""
     CATEGORIA_CHOICES = [
         ('bullying', 'Acoso Escolar/Bullying'),
         ('violencia_fisica', 'Violencia Física'),
@@ -78,20 +128,99 @@ class TipoIncidente(models.Model):
         ('muy_grave', 'Muy Grave'),
     ]
 
+    # Categorías que NO pueden ser eliminadas (definidas por ley)
+    CATEGORIAS_LEGALES = [
+        'bullying', 'violencia_fisica', 'violencia_psicologica', 
+        'discriminacion', 'abuso_sexual', 'consumo_drogas', 
+        'porte_armas', 'ciberacoso'
+    ]
+
     nombre = models.CharField(max_length=255)
     categoria = models.CharField(max_length=30, choices=CATEGORIA_CHOICES)
     gravedad = models.CharField(max_length=15, choices=GRAVEDAD_CHOICES)
     descripcion = models.TextField()
     requiere_denuncia = models.BooleanField(default=False, help_text="Requiere denuncia a autoridades")
     plazo_investigacion_dias = models.PositiveIntegerField(default=5)
+    
+    # Campos para el sistema híbrido
+    es_categoria_legal = models.BooleanField(
+        default=False,
+        help_text="Indica si es una categoría definida por normativa legal (no editable)"
+    )
+    colegio = models.ForeignKey(
+        'Colegio', 
+        on_delete=models.CASCADE, 
+        null=True, 
+        blank=True,
+        help_text="Colegio específico. NULL = aplica a todos los colegios (categorías base)"
+    )
+    activo = models.BooleanField(default=True)
+    protocolo_especifico = models.TextField(
+        blank=True,
+        help_text="Protocolo específico del colegio para este tipo de incidente"
+    )
+    
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def es_editable(self):
+        """Verifica si el tipo puede ser editado (no es categoría legal)"""
+        return not self.es_categoria_legal
+
+    @property 
+    def icono_estado(self):
+        """Retorna el icono según si es editable o no"""
+        return "🔒" if self.es_categoria_legal else "✏️"
+
+    @property
+    def puede_eliminar(self):
+        """Verifica si el tipo puede ser eliminado"""
+        # No se pueden eliminar categorías legales
+        if self.es_categoria_legal:
+            return False
+        # No se puede eliminar si ya hay incidentes reportados con este tipo
+        return not self.incidentreport_set.exists()
+
+    def clean(self):
+        """Validaciones del modelo"""
+        from django.core.exceptions import ValidationError
+        
+        # Validar que categorías legales no se marquen como específicas de colegio
+        if self.es_categoria_legal and self.colegio:
+            raise ValidationError(
+                "Las categorías legales no pueden ser específicas de un colegio"
+            )
+        
+        # Validar plazo de investigación dentro de rango legal
+        if self.plazo_investigacion_dias < 1 or self.plazo_investigacion_dias > 15:
+            raise ValidationError(
+                "El plazo de investigación debe estar entre 1 y 15 días"
+            )
+
+    def save(self, *args, **kwargs):
+        # Auto-detectar si es categoría legal
+        if self.categoria in self.CATEGORIAS_LEGALES:
+            self.es_categoria_legal = True
+            self.colegio = None  # Categorías legales no tienen colegio específico
+        
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.nombre} ({self.get_gravedad_display()})"
+        colegio_info = f" ({self.colegio.nombre})" if self.colegio else ""
+        return f"{self.icono_estado} {self.nombre}{colegio_info}"
 
     class Meta:
         verbose_name = "Tipo de Incidente"
         verbose_name_plural = "Tipos de Incidente"
+        unique_together = [
+            ['nombre', 'colegio'],  # Evitar duplicados por colegio
+        ]
+        indexes = [
+            models.Index(fields=['categoria', 'colegio']),
+            models.Index(fields=['es_categoria_legal']),
+        ]
 
 
 class PerfilUsuario(models.Model):
@@ -337,6 +466,15 @@ class IncidentReport(models.Model):
             elif 'hurto' in self.descripcion.lower():
                 tipos_delito.append('hurtos')
             
+            # Buscar denunciante institucional apropiado
+            denunciante = self.asignado_a
+            if not denunciante or denunciante.tipo_usuario not in ['directivo', 'encargado_convivencia']:
+                denunciante = self.get_encargado_convivencia()
+            
+            # Si no hay encargado de convivencia, buscar cualquier directivo del colegio
+            if not denunciante:
+                denunciante = self.get_directivo_colegio()
+            
             # Crear registro de denuncia obligatoria
             DenunciaObligatoria.objects.get_or_create(
                 incidente=self,
@@ -344,8 +482,7 @@ class IncidentReport(models.Model):
                     'es_constitutivo_delito': True,
                     'tipos_delito': tipos_delito,
                     'fecha_conocimiento': self.created_at,
-                    'denunciante_institucional': self.asignado_a or 
-                        self.get_encargado_convivencia()
+                    'denunciante_institucional': denunciante
                 }
             )
     
@@ -357,11 +494,17 @@ class IncidentReport(models.Model):
                 tipo_usuario='encargado_convivencia'
             )
         except PerfilUsuario.DoesNotExist:
-            # Si no hay encargado, buscar directivo
+            return None
+    
+    def get_directivo_colegio(self):
+        """Obtiene cualquier directivo del colegio"""
+        try:
             return PerfilUsuario.objects.filter(
                 colegio=self.colegio,
                 tipo_usuario='directivo'
             ).first()
+        except PerfilUsuario.DoesNotExist:
+            return None
     
     def es_acoso_escolar_segun_ley(self):
         """Evalúa si cumple definición de acoso escolar según Art. 16 A Ley 20.536"""
@@ -626,6 +769,64 @@ class ResolucionIncidente(models.Model):
         verbose_name_plural = "Resoluciones de Incidente"
 
 
+def validar_archivo_evidencia(archivo):
+    """Valida tipos de archivo y tamaño para evidencias"""
+    from django.core.exceptions import ValidationError
+    
+    # Tipos de archivo permitidos por categoría
+    EXTENSIONES_PERMITIDAS = {
+        'documento': [
+            'pdf', 'doc', 'docx', 'txt', 'rtf', 'odt',
+            'xls', 'xlsx', 'ppt', 'pptx'
+        ],
+        'foto': ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff', 'webp'],
+        'video': ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', '3gp'],
+        'audio': ['mp3', 'wav', 'ogg', 'aac', 'm4a', 'flac'],
+        'otro': []  # Permitir cualquier tipo para "otro"
+    }
+    
+    # Tamaño máximo: 50MB
+    MAX_SIZE = 50 * 1024 * 1024
+    
+    if archivo.size > MAX_SIZE:
+        raise ValidationError(
+            f'El archivo es demasiado grande. '
+            f'Tamaño máximo permitido: 50MB'
+        )
+    
+    # Obtener extensión
+    ext = archivo.name.split('.')[-1].lower() if '.' in archivo.name else ''
+    
+    # Validar extensión según tipo (si no es "otro")
+    # Esta validación se hará en el serializer donde tenemos el tipo
+    
+    return archivo
+
+
+def evidencia_upload_path(instance, filename):
+    """Genera path único para archivos de evidencia"""
+    import os
+    from django.utils import timezone
+    
+    # Obtener extensión del archivo
+    ext = filename.split('.')[-1].lower() if '.' in filename else 'bin'
+    
+    # Generar nombre único con timestamp
+    timestamp = timezone.now().strftime('%Y%m%d_%H%M%S')
+    tipo = instance.tipo_evidencia
+    reporte_id = instance.reporte.id
+    nuevo_nombre = f"{tipo}_{timestamp}_{reporte_id}.{ext}"
+    
+    # Organizar por año/mes para mejor gestión
+    fecha = timezone.now()
+    return os.path.join(
+        'evidencias',
+        str(fecha.year),
+        f"{fecha.month:02d}",
+        nuevo_nombre
+    )
+
+
 class Evidence(models.Model):
     """Evidencias asociadas a un incidente"""
     TIPO_EVIDENCIA_CHOICES = [
@@ -639,15 +840,44 @@ class Evidence(models.Model):
 
     reporte = models.ForeignKey(IncidentReport, on_delete=models.CASCADE, related_name='evidencias')
     tipo_evidencia = models.CharField(max_length=15, choices=TIPO_EVIDENCIA_CHOICES, default='documento')
-    archivo = models.FileField(upload_to='evidencias/', null=True, blank=True)
+    archivo = models.FileField(upload_to=evidencia_upload_path, null=True, blank=True)
     descripcion = models.CharField(max_length=255)
     testimonio_texto = models.TextField(blank=True, help_text="Para testimonios escritos")
     subido_por = models.ForeignKey(PerfilUsuario, on_delete=models.PROTECT, null=True, blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     es_confidencial = models.BooleanField(default=False)
 
+    @property
+    def archivo_url(self):
+        """Obtiene URL completa del archivo"""
+        if self.archivo:
+            return self.archivo.url
+        return None
+    
+    @property
+    def archivo_nombre_original(self):
+        """Obtiene nombre de archivo legible"""
+        if self.archivo:
+            import os
+            nombre = os.path.basename(self.archivo.name)
+            # Remover timestamp del nombre para mostrar algo más amigable
+            partes = nombre.split('_')
+            if len(partes) >= 3:
+                return f"{self.get_tipo_evidencia_display()}_{partes[-1]}"
+            return nombre
+        return "Sin archivo"
+    
+    @property
+    def archivo_tamano_mb(self):
+        """Obtiene tamaño del archivo en MB"""
+        if self.archivo:
+            return round(self.archivo.size / (1024 * 1024), 2)
+        return 0
+
     def __str__(self):
-        return f"Evidencia {self.get_tipo_evidencia_display()} - {self.reporte.titulo}"
+        titulo = self.reporte.titulo[:30] + "..." if len(
+            self.reporte.titulo) > 30 else self.reporte.titulo
+        return f"Evidencia {self.get_tipo_evidencia_display()} - {titulo}"
 
     class Meta:
         verbose_name = "Evidencia"
@@ -743,6 +973,7 @@ class DenunciaObligatoria(models.Model):
     # Responsable de la denuncia
     denunciante_institucional = models.ForeignKey(PerfilUsuario, 
                                                   on_delete=models.PROTECT,
+                                                  null=True, blank=True,
                                                   limit_choices_to={
                                                       'tipo_usuario__in': [
                                                           'directivo', 

@@ -34,14 +34,38 @@ class ColegioSerializer(serializers.ModelSerializer):
 class TipoIncidenteSerializer(serializers.ModelSerializer):
     categoria_display = serializers.CharField(source='get_categoria_display', read_only=True)
     gravedad_display = serializers.CharField(source='get_gravedad_display', read_only=True)
+    icono_estado = serializers.CharField(read_only=True)
+    es_editable = serializers.BooleanField(read_only=True)
+    puede_eliminar = serializers.BooleanField(read_only=True)
+    colegio_nombre = serializers.CharField(source='colegio.nombre', read_only=True)
     
     class Meta:
         model = TipoIncidente
         fields = [
             'id', 'nombre', 'categoria', 'categoria_display', 
             'gravedad', 'gravedad_display', 'descripcion', 
-            'requiere_denuncia', 'plazo_investigacion_dias'
+            'requiere_denuncia', 'plazo_investigacion_dias',
+            'es_categoria_legal', 'colegio', 'colegio_nombre', 
+            'activo', 'protocolo_especifico', 'icono_estado',
+            'es_editable', 'puede_eliminar', 'created_at', 'updated_at'
         ]
+        read_only_fields = ['es_categoria_legal', 'icono_estado', 'es_editable', 'puede_eliminar']
+
+    def validate(self, data):
+        """Validaciones personalizadas"""
+        instance = getattr(self, 'instance', None)
+        
+        # No permitir editar categorías legales
+        if instance and instance.es_categoria_legal:
+            # Solo permitir editar ciertos campos en categorías legales
+            campos_editables_legal = {'protocolo_especifico', 'plazo_investigacion_dias', 'descripcion'}
+            campos_cambiados = set(data.keys()) - campos_editables_legal
+            if campos_cambiados:
+                raise serializers.ValidationError(
+                    f"En categorías legales solo se puede editar: {', '.join(campos_editables_legal)}"
+                )
+        
+        return data
 
 
 class PerfilUsuarioSerializer(serializers.ModelSerializer):
@@ -74,16 +98,59 @@ class SancionSerializer(serializers.ModelSerializer):
 
 
 class EvidenceSerializer(serializers.ModelSerializer):
-    tipo_evidencia_display = serializers.CharField(source='get_tipo_evidencia_display', read_only=True)
-    subido_por_nombre = serializers.CharField(source='subido_por.user.get_full_name', read_only=True)
+    tipo_evidencia_display = serializers.CharField(
+        source='get_tipo_evidencia_display', read_only=True)
+    subido_por_nombre = serializers.CharField(
+        source='subido_por.user.get_full_name', read_only=True)
+    
+    # Campos adicionales de archivo
+    archivo_url = serializers.ReadOnlyField()
+    archivo_nombre_original = serializers.ReadOnlyField()
+    archivo_tamano_mb = serializers.ReadOnlyField()
     
     class Meta:
         model = Evidence
         fields = [
-            'id', 'tipo_evidencia', 'tipo_evidencia_display', 'archivo', 
+            'id', 'tipo_evidencia', 'tipo_evidencia_display', 'archivo',
+            'archivo_url', 'archivo_nombre_original', 'archivo_tamano_mb',
             'descripcion', 'testimonio_texto', 'subido_por', 'subido_por_nombre',
             'uploaded_at', 'es_confidencial'
         ]
+    
+    def validate(self, data):
+        """Validación personalizada para evidencias"""
+        archivo = data.get('archivo')
+        tipo_evidencia = data.get('tipo_evidencia')
+        
+        if archivo and tipo_evidencia:
+            # Tipos de archivo permitidos por categoría
+            extensiones_permitidas = {
+                'documento': [
+                    'pdf', 'doc', 'docx', 'txt', 'rtf', 'odt',
+                    'xls', 'xlsx', 'ppt', 'pptx'
+                ],
+                'foto': [
+                    'jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff', 'webp'
+                ],
+                'video': [
+                    'mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', '3gp'
+                ],
+                'audio': ['mp3', 'wav', 'ogg', 'aac', 'm4a', 'flac'],
+            }
+            
+            # Obtener extensión del archivo
+            if '.' in archivo.name:
+                ext = archivo.name.split('.')[-1].lower()
+                
+                # Validar extensión según tipo (excepto "otro")
+                if tipo_evidencia in extensiones_permitidas:
+                    if ext not in extensiones_permitidas[tipo_evidencia]:
+                        raise serializers.ValidationError({
+                            'archivo': f'Tipo de archivo no válido para {tipo_evidencia}. '
+                                     f'Extensiones permitidas: {", ".join(extensiones_permitidas[tipo_evidencia])}'
+                        })
+        
+        return data
 
 
 class ResolucionIncidenteSerializer(serializers.ModelSerializer):
@@ -141,6 +208,10 @@ class IncidentReportSerializer(serializers.ModelSerializer):
         now = timezone.now()
         dias_restantes = (obj.fecha_limite_investigacion - now).days
         return max(0, dias_restantes)
+    
+    def validate(self, data):
+        """Validación personalizada para reportes de incidentes"""
+        return data
 
 
 # Serializer simplificado para listados
@@ -313,7 +384,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = (
             'id', 'username', 'email', 'first_name', 'last_name', 
-            'role', 'colegio', 'telefono', 'rut', 'password', 'password_confirm'
+            'role', 'colegio', 'telefono', 'rut', 
+            'password', 'password_confirm'
         )
         extra_kwargs = {
             'password': {'write_only': True},
@@ -322,15 +394,34 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['password_confirm']:
             raise serializers.ValidationError("Las contraseñas no coinciden.")
+        
         return attrs
 
     def create(self, validated_data):
         validated_data.pop('password_confirm', None)
         password = validated_data.pop('password')
+        
         user = CustomUser(**validated_data)
         user.set_password(password)
         user.save()
+        
         return user
+
+    def update(self, instance, validated_data):
+        validated_data.pop('password_confirm', None)
+        password = validated_data.pop('password', None)
+        
+        # Actualizar campos básicos
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        
+        # Actualizar contraseña si se proporciona
+        if password:
+            instance.set_password(password)
+        
+        instance.save()
+        
+        return instance
 
 
 class LoginSerializer(serializers.Serializer):
@@ -356,8 +447,8 @@ class LoginSerializer(serializers.Serializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     """Serializador para el perfil del usuario"""
-    colegio_name = serializers.CharField(source='colegio.nombre', read_only=True)
-    role_display = serializers.CharField(source='get_role_display', read_only=True)
+    colegio_name = serializers.SerializerMethodField()
+    role_display = serializers.SerializerMethodField()
     
     class Meta:
         model = CustomUser
@@ -367,3 +458,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'telefono', 'rut', 'date_joined', 'last_login'
         )
         read_only_fields = ('id', 'username', 'date_joined', 'last_login')
+    
+    def get_colegio_name(self, obj):
+        return obj.colegio.nombre if obj.colegio else None
+    
+    def get_role_display(self, obj):
+        return obj.get_role_display()
