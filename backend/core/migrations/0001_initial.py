@@ -13,592 +13,1845 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('auth', '0012_alter_user_first_name_max_length'),
+        ("auth", "0012_alter_user_first_name_max_length"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Colegio',
+            name="Colegio",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nombre', models.CharField(max_length=255)),
-                ('rbd', models.CharField(blank=True, help_text='Rol Base de Datos MINEDUC', max_length=20, null=True, unique=True)),
-                ('direccion', models.TextField(blank=True)),
-                ('telefono', models.CharField(blank=True, max_length=20)),
-                ('email', models.EmailField(blank=True, max_length=254)),
-                ('director', models.CharField(blank=True, max_length=255)),
-                ('encargado_convivencia', models.CharField(blank=True, max_length=255)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nombre", models.CharField(max_length=255)),
+                (
+                    "rbd",
+                    models.CharField(
+                        blank=True,
+                        help_text="Rol Base de Datos MINEDUC",
+                        max_length=20,
+                        null=True,
+                        unique=True,
+                    ),
+                ),
+                ("direccion", models.TextField(blank=True)),
+                ("telefono", models.CharField(blank=True, max_length=20)),
+                ("email", models.EmailField(blank=True, max_length=254)),
+                ("director", models.CharField(blank=True, max_length=255)),
+                ("encargado_convivencia", models.CharField(blank=True, max_length=255)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
             options={
-                'verbose_name': 'Colegio',
-                'verbose_name_plural': 'Colegios',
+                "verbose_name": "Colegio",
+                "verbose_name_plural": "Colegios",
             },
         ),
         migrations.CreateModel(
-            name='EtapaProtocolo',
+            name="EtapaProtocolo",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('orden', models.PositiveIntegerField()),
-                ('nombre', models.CharField(max_length=100)),
-                ('descripcion', models.TextField()),
-                ('plazo_horas', models.PositiveIntegerField(default=24)),
-                ('es_plazo_habiles', models.BooleanField(default=True, help_text='¿Son horas hábiles o corridas?')),
-                ('responsable_rol', models.CharField(choices=[('encargado_convivencia', 'Encargado de Convivencia'), ('directivo', 'Directivo'), ('director', 'Director'), ('docente', 'Docente'), ('inspector', 'Inspector General'), ('consejo_disciplinario', 'Consejo Disciplinario'), ('equipo_convivencia', 'Equipo de Convivencia')], max_length=25)),
-                ('acciones_requeridas', models.TextField(help_text='Descripción de las acciones a realizar en esta etapa')),
-                ('documentos_requeridos', models.TextField(blank=True, help_text='Documentos que se deben generar/adjuntar')),
-                ('es_obligatoria', models.BooleanField(default=True)),
-                ('permite_anonimo', models.BooleanField(default=True, help_text='¿Se puede ejecutar con denuncia anónima?')),
-                ('accion_si_anonimo', models.CharField(choices=[('normal', 'Proceso Normal'), ('modificada', 'Proceso Modificado'), ('omitir', 'Omitir Esta Etapa')], default='normal', max_length=20)),
-                ('descripcion_anonimo', models.TextField(blank=True, help_text='Descripción alternativa para casos anónimos')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("orden", models.PositiveIntegerField()),
+                ("nombre", models.CharField(max_length=100)),
+                ("descripcion", models.TextField()),
+                ("plazo_horas", models.PositiveIntegerField(default=24)),
+                (
+                    "es_plazo_habiles",
+                    models.BooleanField(
+                        default=True, help_text="¿Son horas hábiles o corridas?"
+                    ),
+                ),
+                (
+                    "responsable_rol",
+                    models.CharField(
+                        choices=[
+                            ("encargado_convivencia", "Encargado de Convivencia"),
+                            ("directivo", "Directivo"),
+                            ("director", "Director"),
+                            ("docente", "Docente"),
+                            ("inspector", "Inspector General"),
+                            ("consejo_disciplinario", "Consejo Disciplinario"),
+                            ("equipo_convivencia", "Equipo de Convivencia"),
+                        ],
+                        max_length=25,
+                    ),
+                ),
+                (
+                    "acciones_requeridas",
+                    models.TextField(
+                        help_text="Descripción de las acciones a realizar en esta etapa"
+                    ),
+                ),
+                (
+                    "documentos_requeridos",
+                    models.TextField(
+                        blank=True, help_text="Documentos que se deben generar/adjuntar"
+                    ),
+                ),
+                ("es_obligatoria", models.BooleanField(default=True)),
+                (
+                    "permite_anonimo",
+                    models.BooleanField(
+                        default=True,
+                        help_text="¿Se puede ejecutar con denuncia anónima?",
+                    ),
+                ),
+                (
+                    "accion_si_anonimo",
+                    models.CharField(
+                        choices=[
+                            ("normal", "Proceso Normal"),
+                            ("modificada", "Proceso Modificado"),
+                            ("omitir", "Omitir Esta Etapa"),
+                        ],
+                        default="normal",
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "descripcion_anonimo",
+                    models.TextField(
+                        blank=True,
+                        help_text="Descripción alternativa para casos anónimos",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Etapa de Protocolo',
-                'verbose_name_plural': 'Etapas de Protocolo',
-                'ordering': ['orden'],
+                "verbose_name": "Etapa de Protocolo",
+                "verbose_name_plural": "Etapas de Protocolo",
+                "ordering": ["orden"],
             },
         ),
         migrations.CreateModel(
-            name='MedidaFormativa',
+            name="MedidaFormativa",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nombre', models.CharField(max_length=255)),
-                ('tipo', models.CharField(choices=[('dialogo_reflexivo', 'Diálogo Reflexivo'), ('trabajo_comunitario', 'Trabajo Comunitario'), ('reparacion_dano', 'Reparación del Daño'), ('mediacion', 'Mediación'), ('taller_formativo', 'Taller Formativo'), ('seguimiento_psicosocial', 'Seguimiento Psicosocial'), ('compromiso_conductual', 'Compromiso Conductual'), ('otro', 'Otro')], max_length=25)),
-                ('descripcion', models.TextField()),
-                ('duracion_estimada_horas', models.PositiveIntegerField(default=1)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nombre", models.CharField(max_length=255)),
+                (
+                    "tipo",
+                    models.CharField(
+                        choices=[
+                            ("dialogo_reflexivo", "Diálogo Reflexivo"),
+                            ("trabajo_comunitario", "Trabajo Comunitario"),
+                            ("reparacion_dano", "Reparación del Daño"),
+                            ("mediacion", "Mediación"),
+                            ("taller_formativo", "Taller Formativo"),
+                            ("seguimiento_psicosocial", "Seguimiento Psicosocial"),
+                            ("compromiso_conductual", "Compromiso Conductual"),
+                            ("otro", "Otro"),
+                        ],
+                        max_length=25,
+                    ),
+                ),
+                ("descripcion", models.TextField()),
+                ("duracion_estimada_horas", models.PositiveIntegerField(default=1)),
             ],
             options={
-                'verbose_name': 'Medida Formativa',
-                'verbose_name_plural': 'Medidas Formativas',
+                "verbose_name": "Medida Formativa",
+                "verbose_name_plural": "Medidas Formativas",
             },
         ),
         migrations.CreateModel(
-            name='Sancion',
+            name="Sancion",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nombre', models.CharField(max_length=255)),
-                ('tipo', models.CharField(choices=[('amonestacion_verbal', 'Amonestación Verbal'), ('amonestacion_escrita', 'Amonestación Escrita'), ('suspension_clases', 'Suspensión de Clases'), ('prohibicion_actividades', 'Prohibición de Actividades Extracurriculares'), ('condicionalidad_matricula', 'Condicionalidad de Matrícula'), ('cancelacion_matricula', 'Cancelación de Matrícula'), ('no_renovacion_matricula', 'No Renovación de Matrícula')], max_length=30)),
-                ('descripcion', models.TextField()),
-                ('dias_duracion', models.PositiveIntegerField(default=1, help_text='Duración en días (si aplica)')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nombre", models.CharField(max_length=255)),
+                (
+                    "tipo",
+                    models.CharField(
+                        choices=[
+                            ("amonestacion_verbal", "Amonestación Verbal"),
+                            ("amonestacion_escrita", "Amonestación Escrita"),
+                            ("suspension_clases", "Suspensión de Clases"),
+                            (
+                                "prohibicion_actividades",
+                                "Prohibición de Actividades Extracurriculares",
+                            ),
+                            (
+                                "condicionalidad_matricula",
+                                "Condicionalidad de Matrícula",
+                            ),
+                            ("cancelacion_matricula", "Cancelación de Matrícula"),
+                            ("no_renovacion_matricula", "No Renovación de Matrícula"),
+                        ],
+                        max_length=30,
+                    ),
+                ),
+                ("descripcion", models.TextField()),
+                (
+                    "dias_duracion",
+                    models.PositiveIntegerField(
+                        default=1, help_text="Duración en días (si aplica)"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Sanción',
-                'verbose_name_plural': 'Sanciones',
+                "verbose_name": "Sanción",
+                "verbose_name_plural": "Sanciones",
             },
         ),
         migrations.CreateModel(
-            name='TipoIncidente',
+            name="TipoIncidente",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nombre', models.CharField(max_length=255)),
-                ('categoria', models.CharField(choices=[('bullying', 'Acoso Escolar/Bullying'), ('violencia_fisica', 'Violencia Física'), ('violencia_psicologica', 'Violencia Psicológica'), ('discriminacion', 'Discriminación'), ('abuso_sexual', 'Abuso Sexual'), ('consumo_drogas', 'Consumo de Drogas/Alcohol'), ('porte_armas', 'Porte de Armas'), ('vandalismo', 'Vandalismo'), ('ciberacoso', 'Ciberacoso'), ('otro', 'Otro')], max_length=30)),
-                ('gravedad', models.CharField(choices=[('leve', 'Leve'), ('grave', 'Grave'), ('muy_grave', 'Muy Grave')], max_length=15)),
-                ('descripcion', models.TextField()),
-                ('requiere_denuncia', models.BooleanField(default=False, help_text='Requiere denuncia a autoridades')),
-                ('plazo_investigacion_dias', models.PositiveIntegerField(default=5)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nombre", models.CharField(max_length=255)),
+                (
+                    "categoria",
+                    models.CharField(
+                        choices=[
+                            ("bullying", "Acoso Escolar/Bullying"),
+                            ("violencia_fisica", "Violencia Física"),
+                            ("violencia_psicologica", "Violencia Psicológica"),
+                            ("discriminacion", "Discriminación"),
+                            ("abuso_sexual", "Abuso Sexual"),
+                            ("consumo_drogas", "Consumo de Drogas/Alcohol"),
+                            ("porte_armas", "Porte de Armas"),
+                            ("vandalismo", "Vandalismo"),
+                            ("ciberacoso", "Ciberacoso"),
+                            ("otro", "Otro"),
+                        ],
+                        max_length=30,
+                    ),
+                ),
+                (
+                    "gravedad",
+                    models.CharField(
+                        choices=[
+                            ("leve", "Leve"),
+                            ("grave", "Grave"),
+                            ("muy_grave", "Muy Grave"),
+                        ],
+                        max_length=15,
+                    ),
+                ),
+                ("descripcion", models.TextField()),
+                (
+                    "requiere_denuncia",
+                    models.BooleanField(
+                        default=False, help_text="Requiere denuncia a autoridades"
+                    ),
+                ),
+                ("plazo_investigacion_dias", models.PositiveIntegerField(default=5)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
             ],
             options={
-                'verbose_name': 'Tipo de Incidente',
-                'verbose_name_plural': 'Tipos de Incidente',
+                "verbose_name": "Tipo de Incidente",
+                "verbose_name_plural": "Tipos de Incidente",
             },
         ),
         migrations.CreateModel(
-            name='CustomUser',
+            name="CustomUser",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
-                ('username', models.CharField(error_messages={'unique': 'A user with that username already exists.'}, help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', max_length=150, unique=True, validators=[django.contrib.auth.validators.UnicodeUsernameValidator()], verbose_name='username')),
-                ('first_name', models.CharField(blank=True, max_length=150, verbose_name='first name')),
-                ('last_name', models.CharField(blank=True, max_length=150, verbose_name='last name')),
-                ('email', models.EmailField(blank=True, max_length=254, verbose_name='email address')),
-                ('is_staff', models.BooleanField(default=False, help_text='Designates whether the user can log into this admin site.', verbose_name='staff status')),
-                ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
-                ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
-                ('role', models.CharField(choices=[('sostenedor', 'Sostenedor'), ('director', 'Director'), ('encargado_convivencia', 'Encargado de Convivencia'), ('admin', 'Administrador del Sistema')], default='encargado_convivencia', max_length=25)),
-                ('telefono', models.CharField(blank=True, max_length=20)),
-                ('rut', models.CharField(blank=True, max_length=20, null=True, unique=True)),
-                ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.group', verbose_name='groups')),
-                ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.permission', verbose_name='user permissions')),
-                ('colegio', models.ForeignKey(blank=True, help_text='Colegio al que pertenece el usuario', null=True, on_delete=django.db.models.deletion.CASCADE, to='core.colegio')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("password", models.CharField(max_length=128, verbose_name="password")),
+                (
+                    "last_login",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="last login"
+                    ),
+                ),
+                (
+                    "is_superuser",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates that this user has all permissions without explicitly assigning them.",
+                        verbose_name="superuser status",
+                    ),
+                ),
+                (
+                    "username",
+                    models.CharField(
+                        error_messages={
+                            "unique": "A user with that username already exists."
+                        },
+                        help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+                        max_length=150,
+                        unique=True,
+                        validators=[
+                            django.contrib.auth.validators.UnicodeUsernameValidator()
+                        ],
+                        verbose_name="username",
+                    ),
+                ),
+                (
+                    "first_name",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="first name"
+                    ),
+                ),
+                (
+                    "last_name",
+                    models.CharField(
+                        blank=True, max_length=150, verbose_name="last name"
+                    ),
+                ),
+                (
+                    "email",
+                    models.EmailField(
+                        blank=True, max_length=254, verbose_name="email address"
+                    ),
+                ),
+                (
+                    "is_staff",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Designates whether the user can log into this admin site.",
+                        verbose_name="staff status",
+                    ),
+                ),
+                (
+                    "is_active",
+                    models.BooleanField(
+                        default=True,
+                        help_text="Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
+                        verbose_name="active",
+                    ),
+                ),
+                (
+                    "date_joined",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now, verbose_name="date joined"
+                    ),
+                ),
+                (
+                    "role",
+                    models.CharField(
+                        choices=[
+                            ("sostenedor", "Sostenedor"),
+                            ("director", "Director"),
+                            ("encargado_convivencia", "Encargado de Convivencia"),
+                            ("admin", "Administrador del Sistema"),
+                        ],
+                        default="encargado_convivencia",
+                        max_length=25,
+                    ),
+                ),
+                ("telefono", models.CharField(blank=True, max_length=20)),
+                (
+                    "rut",
+                    models.CharField(blank=True, max_length=20, null=True, unique=True),
+                ),
+                (
+                    "groups",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.group",
+                        verbose_name="groups",
+                    ),
+                ),
+                (
+                    "user_permissions",
+                    models.ManyToManyField(
+                        blank=True,
+                        help_text="Specific permissions for this user.",
+                        related_name="user_set",
+                        related_query_name="user",
+                        to="auth.permission",
+                        verbose_name="user permissions",
+                    ),
+                ),
+                (
+                    "colegio",
+                    models.ForeignKey(
+                        blank=True,
+                        help_text="Colegio al que pertenece el usuario",
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="core.colegio",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Usuario',
-                'verbose_name_plural': 'Usuarios',
+                "verbose_name": "Usuario",
+                "verbose_name_plural": "Usuarios",
             },
             managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
+                ("objects", django.contrib.auth.models.UserManager()),
             ],
         ),
         migrations.CreateModel(
-            name='IncidentReport',
+            name="IncidentReport",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('titulo', models.CharField(max_length=255)),
-                ('descripcion', models.TextField()),
-                ('fecha_incidente', models.DateTimeField()),
-                ('lugar_incidente', models.CharField(help_text='Sala, patio, baño, etc.', max_length=255)),
-                ('solicita_anonimato', models.BooleanField(default=False)),
-                ('nivel_anonimato', models.CharField(choices=[('publico', 'Público - Mi identidad puede ser conocida'), ('restringido', 'Restringido - Solo autoridades del colegio'), ('confidencial', 'Confidencial - Solo Encargado de Convivencia'), ('judicial', 'Judicial - Solo para efectos legales')], default='publico', max_length=20)),
-                ('justificacion_anonimato', models.TextField(blank=True, help_text='¿Por qué solicita anonimato?')),
-                ('anonimo', models.BooleanField(default=False)),
-                ('reportero_externo_nombre', models.CharField(blank=True, help_text='Si el reportero no está en el sistema', max_length=255)),
-                ('reportero_externo_contacto', models.CharField(blank=True, max_length=255)),
-                ('estado', models.CharField(choices=[('recibido', 'Recibido'), ('en_investigacion', 'En Investigación'), ('resuelto', 'Resuelto'), ('cerrado', 'Cerrado'), ('derivado', 'Derivado a Autoridades')], default='recibido', max_length=20)),
-                ('urgencia', models.CharField(choices=[('baja', 'Baja'), ('media', 'Media'), ('alta', 'Alta'), ('critica', 'Crítica')], default='media', max_length=15)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('fecha_limite_investigacion', models.DateTimeField(blank=True, null=True)),
-                ('fecha_resolucion', models.DateTimeField(blank=True, null=True)),
-                ('requiere_denuncia', models.BooleanField(default=False)),
-                ('fecha_denuncia', models.DateTimeField(blank=True, null=True)),
-                ('numero_denuncia', models.CharField(blank=True, max_length=100)),
-                ('colegio', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reportes', to='core.colegio')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("titulo", models.CharField(max_length=255)),
+                ("descripcion", models.TextField()),
+                ("fecha_incidente", models.DateTimeField()),
+                (
+                    "lugar_incidente",
+                    models.CharField(
+                        help_text="Sala, patio, baño, etc.", max_length=255
+                    ),
+                ),
+                ("solicita_anonimato", models.BooleanField(default=False)),
+                (
+                    "nivel_anonimato",
+                    models.CharField(
+                        choices=[
+                            ("publico", "Público - Mi identidad puede ser conocida"),
+                            (
+                                "restringido",
+                                "Restringido - Solo autoridades del colegio",
+                            ),
+                            (
+                                "confidencial",
+                                "Confidencial - Solo Encargado de Convivencia",
+                            ),
+                            ("judicial", "Judicial - Solo para efectos legales"),
+                        ],
+                        default="publico",
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "justificacion_anonimato",
+                    models.TextField(
+                        blank=True, help_text="¿Por qué solicita anonimato?"
+                    ),
+                ),
+                ("anonimo", models.BooleanField(default=False)),
+                (
+                    "reportero_externo_nombre",
+                    models.CharField(
+                        blank=True,
+                        help_text="Si el reportero no está en el sistema",
+                        max_length=255,
+                    ),
+                ),
+                (
+                    "reportero_externo_contacto",
+                    models.CharField(blank=True, max_length=255),
+                ),
+                (
+                    "estado",
+                    models.CharField(
+                        choices=[
+                            ("recibido", "Recibido"),
+                            ("en_investigacion", "En Investigación"),
+                            ("resuelto", "Resuelto"),
+                            ("cerrado", "Cerrado"),
+                            ("derivado", "Derivado a Autoridades"),
+                        ],
+                        default="recibido",
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "urgencia",
+                    models.CharField(
+                        choices=[
+                            ("baja", "Baja"),
+                            ("media", "Media"),
+                            ("alta", "Alta"),
+                            ("critica", "Crítica"),
+                        ],
+                        default="media",
+                        max_length=15,
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "fecha_limite_investigacion",
+                    models.DateTimeField(blank=True, null=True),
+                ),
+                ("fecha_resolucion", models.DateTimeField(blank=True, null=True)),
+                ("requiere_denuncia", models.BooleanField(default=False)),
+                ("fecha_denuncia", models.DateTimeField(blank=True, null=True)),
+                ("numero_denuncia", models.CharField(blank=True, max_length=100)),
+                (
+                    "colegio",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="reportes",
+                        to="core.colegio",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Reporte de Incidente',
-                'verbose_name_plural': 'Reportes de Incidente',
-                'ordering': ['-created_at'],
+                "verbose_name": "Reporte de Incidente",
+                "verbose_name_plural": "Reportes de Incidente",
+                "ordering": ["-created_at"],
             },
         ),
         migrations.CreateModel(
-            name='PerfilUsuario',
+            name="PerfilUsuario",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tipo_usuario', models.CharField(choices=[('estudiante', 'Estudiante'), ('docente', 'Docente'), ('directivo', 'Directivo'), ('apoderado', 'Apoderado'), ('encargado_convivencia', 'Encargado de Convivencia'), ('asistente', 'Asistente de la Educación'), ('administrativo', 'Administrativo')], max_length=25)),
-                ('rut', models.CharField(blank=True, max_length=12)),
-                ('telefono', models.CharField(blank=True, max_length=20)),
-                ('curso', models.CharField(blank=True, help_text='Ej: 8°A, 3° Medio', max_length=10)),
-                ('profesion', models.CharField(blank=True, choices=[('educacion', 'Profesional de la Educación'), ('psicologia', 'Psicólogo(a)'), ('trabajo_social', 'Trabajador(a) Social'), ('psicopedagogia', 'Psicopedagogo(a)'), ('orientacion', 'Orientador(a)'), ('otra', 'Otra Profesión Afín')], max_length=20)),
-                ('numero_registro_profesional', models.CharField(blank=True, help_text='Número de registro en colegio profesional', max_length=50)),
-                ('jornada_laboral_horas', models.PositiveIntegerField(blank=True, help_text='Horas semanales de dedicación (mínimo 44h según normativa)', null=True)),
-                ('fecha_nombramiento', models.DateField(blank=True, help_text='Fecha de nombramiento como Encargado de Convivencia', null=True)),
-                ('certificacion_convivencia_escolar', models.BooleanField(default=False, help_text='¿Tiene certificación en convivencia escolar?')),
-                ('fecha_ultima_capacitacion', models.DateField(blank=True, null=True)),
-                ('instituciones_capacitacion', models.TextField(blank=True, help_text='Instituciones donde recibió capacitación')),
-                ('email_institucional', models.EmailField(blank=True, max_length=254)),
-                ('telefono_emergencia', models.CharField(blank=True, max_length=20)),
-                ('colegio', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.colegio')),
-                ('estudiantes_a_cargo', models.ManyToManyField(blank=True, to='core.perfilusuario')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "tipo_usuario",
+                    models.CharField(
+                        choices=[
+                            ("estudiante", "Estudiante"),
+                            ("docente", "Docente"),
+                            ("directivo", "Directivo"),
+                            ("apoderado", "Apoderado"),
+                            ("encargado_convivencia", "Encargado de Convivencia"),
+                            ("asistente", "Asistente de la Educación"),
+                            ("administrativo", "Administrativo"),
+                        ],
+                        max_length=25,
+                    ),
+                ),
+                ("rut", models.CharField(blank=True, max_length=12)),
+                ("telefono", models.CharField(blank=True, max_length=20)),
+                (
+                    "curso",
+                    models.CharField(
+                        blank=True, help_text="Ej: 8°A, 3° Medio", max_length=10
+                    ),
+                ),
+                (
+                    "profesion",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("educacion", "Profesional de la Educación"),
+                            ("psicologia", "Psicólogo(a)"),
+                            ("trabajo_social", "Trabajador(a) Social"),
+                            ("psicopedagogia", "Psicopedagogo(a)"),
+                            ("orientacion", "Orientador(a)"),
+                            ("otra", "Otra Profesión Afín"),
+                        ],
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "numero_registro_profesional",
+                    models.CharField(
+                        blank=True,
+                        help_text="Número de registro en colegio profesional",
+                        max_length=50,
+                    ),
+                ),
+                (
+                    "jornada_laboral_horas",
+                    models.PositiveIntegerField(
+                        blank=True,
+                        help_text="Horas semanales de dedicación (mínimo 44h según normativa)",
+                        null=True,
+                    ),
+                ),
+                (
+                    "fecha_nombramiento",
+                    models.DateField(
+                        blank=True,
+                        help_text="Fecha de nombramiento como Encargado de Convivencia",
+                        null=True,
+                    ),
+                ),
+                (
+                    "certificacion_convivencia_escolar",
+                    models.BooleanField(
+                        default=False,
+                        help_text="¿Tiene certificación en convivencia escolar?",
+                    ),
+                ),
+                ("fecha_ultima_capacitacion", models.DateField(blank=True, null=True)),
+                (
+                    "instituciones_capacitacion",
+                    models.TextField(
+                        blank=True, help_text="Instituciones donde recibió capacitación"
+                    ),
+                ),
+                ("email_institucional", models.EmailField(blank=True, max_length=254)),
+                ("telefono_emergencia", models.CharField(blank=True, max_length=20)),
+                (
+                    "colegio",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="core.colegio"
+                    ),
+                ),
+                (
+                    "estudiantes_a_cargo",
+                    models.ManyToManyField(blank=True, to="core.perfilusuario"),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Perfil de Usuario',
-                'verbose_name_plural': 'Perfiles de Usuario',
+                "verbose_name": "Perfil de Usuario",
+                "verbose_name_plural": "Perfiles de Usuario",
             },
         ),
         migrations.CreateModel(
-            name='NotificacionLegal',
+            name="NotificacionLegal",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tipo_notificacion', models.CharField(choices=[('apoderado_caso_leve', 'Notificación a Apoderado - Caso Leve'), ('apoderado_caso_grave', 'Notificación a Apoderado - Caso Grave'), ('mineduc_caso_grave', 'Notificación MINEDUC - Caso Muy Grave'), ('fiscalia_delito', 'Denuncia Fiscalía - Delito'), ('pdi_delito', 'Denuncia PDI - Delito'), ('carabineros_delito', 'Denuncia Carabineros - Delito'), ('superintendencia', 'Notificación Superintendencia de Educación'), ('tribunal_familia', 'Notificación Tribunal de Familia'), ('opd_vulneracion', 'Notificación OPD - Vulneración Derechos')], max_length=30)),
-                ('plazo_maximo_horas', models.PositiveIntegerField(help_text='Plazo máximo legal en horas')),
-                ('fecha_limite', models.DateTimeField()),
-                ('destinatario_nombre', models.CharField(max_length=255)),
-                ('destinatario_email', models.EmailField(blank=True, max_length=254)),
-                ('destinatario_telefono', models.CharField(blank=True, max_length=20)),
-                ('institucion_destinatario', models.CharField(blank=True, max_length=255)),
-                ('estado', models.CharField(choices=[('pendiente', 'Pendiente'), ('enviada', 'Enviada'), ('recibida', 'Recibida/Confirmada'), ('vencida', 'Vencida')], default='pendiente', max_length=15)),
-                ('fecha_envio', models.DateTimeField(blank=True, null=True)),
-                ('fecha_confirmacion', models.DateTimeField(blank=True, null=True)),
-                ('numero_seguimiento', models.CharField(blank=True, help_text='Número de seguimiento oficial', max_length=100)),
-                ('asunto', models.CharField(max_length=255)),
-                ('mensaje', models.TextField()),
-                ('documentos_adjuntos', models.FileField(blank=True, null=True, upload_to='notificaciones/')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('incidente', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='notificaciones_legales', to='core.incidentreport')),
-                ('enviado_por', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='core.perfilusuario')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "tipo_notificacion",
+                    models.CharField(
+                        choices=[
+                            (
+                                "apoderado_caso_leve",
+                                "Notificación a Apoderado - Caso Leve",
+                            ),
+                            (
+                                "apoderado_caso_grave",
+                                "Notificación a Apoderado - Caso Grave",
+                            ),
+                            (
+                                "mineduc_caso_grave",
+                                "Notificación MINEDUC - Caso Muy Grave",
+                            ),
+                            ("fiscalia_delito", "Denuncia Fiscalía - Delito"),
+                            ("pdi_delito", "Denuncia PDI - Delito"),
+                            ("carabineros_delito", "Denuncia Carabineros - Delito"),
+                            (
+                                "superintendencia",
+                                "Notificación Superintendencia de Educación",
+                            ),
+                            ("tribunal_familia", "Notificación Tribunal de Familia"),
+                            (
+                                "opd_vulneracion",
+                                "Notificación OPD - Vulneración Derechos",
+                            ),
+                        ],
+                        max_length=30,
+                    ),
+                ),
+                (
+                    "plazo_maximo_horas",
+                    models.PositiveIntegerField(
+                        help_text="Plazo máximo legal en horas"
+                    ),
+                ),
+                ("fecha_limite", models.DateTimeField()),
+                ("destinatario_nombre", models.CharField(max_length=255)),
+                ("destinatario_email", models.EmailField(blank=True, max_length=254)),
+                ("destinatario_telefono", models.CharField(blank=True, max_length=20)),
+                (
+                    "institucion_destinatario",
+                    models.CharField(blank=True, max_length=255),
+                ),
+                (
+                    "estado",
+                    models.CharField(
+                        choices=[
+                            ("pendiente", "Pendiente"),
+                            ("enviada", "Enviada"),
+                            ("recibida", "Recibida/Confirmada"),
+                            ("vencida", "Vencida"),
+                        ],
+                        default="pendiente",
+                        max_length=15,
+                    ),
+                ),
+                ("fecha_envio", models.DateTimeField(blank=True, null=True)),
+                ("fecha_confirmacion", models.DateTimeField(blank=True, null=True)),
+                (
+                    "numero_seguimiento",
+                    models.CharField(
+                        blank=True,
+                        help_text="Número de seguimiento oficial",
+                        max_length=100,
+                    ),
+                ),
+                ("asunto", models.CharField(max_length=255)),
+                ("mensaje", models.TextField()),
+                (
+                    "documentos_adjuntos",
+                    models.FileField(
+                        blank=True, null=True, upload_to="notificaciones/"
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "incidente",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="notificaciones_legales",
+                        to="core.incidentreport",
+                    ),
+                ),
+                (
+                    "enviado_por",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="core.perfilusuario",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Notificación Legal',
-                'verbose_name_plural': 'Notificaciones Legales',
-                'ordering': ['fecha_limite'],
+                "verbose_name": "Notificación Legal",
+                "verbose_name_plural": "Notificaciones Legales",
+                "ordering": ["fecha_limite"],
             },
         ),
         migrations.CreateModel(
-            name='MedidaDisciplinaria',
+            name="MedidaDisciplinaria",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('gravedad_infraccion', models.CharField(choices=[('leve', 'Leve'), ('menos_grave', 'Menos Grave'), ('grave', 'Grave'), ('gravisima', 'Gravísima')], max_length=15)),
-                ('fecha_notificacion_estudiante', models.DateTimeField()),
-                ('fecha_notificacion_apoderado', models.DateTimeField()),
-                ('plazo_descargos_dias', models.PositiveIntegerField(default=5)),
-                ('descargos_presentados', models.TextField(blank=True)),
-                ('fecha_presentacion_descargos', models.DateTimeField(blank=True, null=True)),
-                ('tipo_medida', models.CharField(choices=[('amonestacion_verbal', 'Amonestación Verbal'), ('amonestacion_escrita', 'Amonestación Escrita'), ('suspension_temporal', 'Suspensión Temporal'), ('reduccion_jornada', 'Reducción de Jornada Escolar'), ('separacion_temporal', 'Separación Temporal de Actividades'), ('condicionalidad', 'Condicionalidad de Matrícula'), ('cancelacion_matricula', 'Cancelación de Matrícula'), ('no_renovacion', 'No Renovación de Matrícula')], max_length=25)),
-                ('descripcion_medida', models.TextField()),
-                ('duracion_dias', models.PositiveIntegerField(blank=True, null=True)),
-                ('fundamentacion_proporcionalidad', models.TextField(help_text='Fundamentación de la proporcionalidad de la medida')),
-                ('cumple_principio_proporcionalidad', models.BooleanField(default=True)),
-                ('permite_apelacion', models.BooleanField(default=True)),
-                ('plazo_apelacion_dias', models.PositiveIntegerField(default=5)),
-                ('fecha_limite_apelacion', models.DateTimeField(blank=True, null=True)),
-                ('apelacion_presentada', models.BooleanField(default=False)),
-                ('fecha_apelacion', models.DateTimeField(blank=True, null=True)),
-                ('fundamentos_apelacion', models.TextField(blank=True)),
-                ('resolucion_apelacion', models.TextField(blank=True)),
-                ('apelacion_acogida', models.BooleanField(blank=True, null=True)),
-                ('fecha_inicio_aplicacion', models.DateField(blank=True, null=True)),
-                ('fecha_fin_aplicacion', models.DateField(blank=True, null=True)),
-                ('medida_cumplida', models.BooleanField(default=False)),
-                ('incidente', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='medidas_disciplinarias', to='core.incidentreport')),
-                ('aplicada_por', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.perfilusuario')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "gravedad_infraccion",
+                    models.CharField(
+                        choices=[
+                            ("leve", "Leve"),
+                            ("menos_grave", "Menos Grave"),
+                            ("grave", "Grave"),
+                            ("gravisima", "Gravísima"),
+                        ],
+                        max_length=15,
+                    ),
+                ),
+                ("fecha_notificacion_estudiante", models.DateTimeField()),
+                ("fecha_notificacion_apoderado", models.DateTimeField()),
+                ("plazo_descargos_dias", models.PositiveIntegerField(default=5)),
+                ("descargos_presentados", models.TextField(blank=True)),
+                (
+                    "fecha_presentacion_descargos",
+                    models.DateTimeField(blank=True, null=True),
+                ),
+                (
+                    "tipo_medida",
+                    models.CharField(
+                        choices=[
+                            ("amonestacion_verbal", "Amonestación Verbal"),
+                            ("amonestacion_escrita", "Amonestación Escrita"),
+                            ("suspension_temporal", "Suspensión Temporal"),
+                            ("reduccion_jornada", "Reducción de Jornada Escolar"),
+                            (
+                                "separacion_temporal",
+                                "Separación Temporal de Actividades",
+                            ),
+                            ("condicionalidad", "Condicionalidad de Matrícula"),
+                            ("cancelacion_matricula", "Cancelación de Matrícula"),
+                            ("no_renovacion", "No Renovación de Matrícula"),
+                        ],
+                        max_length=25,
+                    ),
+                ),
+                ("descripcion_medida", models.TextField()),
+                ("duracion_dias", models.PositiveIntegerField(blank=True, null=True)),
+                (
+                    "fundamentacion_proporcionalidad",
+                    models.TextField(
+                        help_text="Fundamentación de la proporcionalidad de la medida"
+                    ),
+                ),
+                (
+                    "cumple_principio_proporcionalidad",
+                    models.BooleanField(default=True),
+                ),
+                ("permite_apelacion", models.BooleanField(default=True)),
+                ("plazo_apelacion_dias", models.PositiveIntegerField(default=5)),
+                ("fecha_limite_apelacion", models.DateTimeField(blank=True, null=True)),
+                ("apelacion_presentada", models.BooleanField(default=False)),
+                ("fecha_apelacion", models.DateTimeField(blank=True, null=True)),
+                ("fundamentos_apelacion", models.TextField(blank=True)),
+                ("resolucion_apelacion", models.TextField(blank=True)),
+                ("apelacion_acogida", models.BooleanField(blank=True, null=True)),
+                ("fecha_inicio_aplicacion", models.DateField(blank=True, null=True)),
+                ("fecha_fin_aplicacion", models.DateField(blank=True, null=True)),
+                ("medida_cumplida", models.BooleanField(default=False)),
+                (
+                    "incidente",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="medidas_disciplinarias",
+                        to="core.incidentreport",
+                    ),
+                ),
+                (
+                    "aplicada_por",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="core.perfilusuario",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Medida Disciplinaria',
-                'verbose_name_plural': 'Medidas Disciplinarias',
+                "verbose_name": "Medida Disciplinaria",
+                "verbose_name_plural": "Medidas Disciplinarias",
             },
         ),
         migrations.AddField(
-            model_name='incidentreport',
-            name='asignado_a',
-            field=models.ForeignKey(blank=True, limit_choices_to={'tipo_usuario__in': ['encargado_convivencia', 'directivo']}, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='casos_asignados', to='core.perfilusuario'),
+            model_name="incidentreport",
+            name="asignado_a",
+            field=models.ForeignKey(
+                blank=True,
+                limit_choices_to={
+                    "tipo_usuario__in": ["encargado_convivencia", "directivo"]
+                },
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="casos_asignados",
+                to="core.perfilusuario",
+            ),
         ),
         migrations.AddField(
-            model_name='incidentreport',
-            name='estudiantes_involucrados',
-            field=models.ManyToManyField(blank=True, limit_choices_to={'tipo_usuario': 'estudiante'}, related_name='incidentes_involucrado', to='core.perfilusuario'),
+            model_name="incidentreport",
+            name="estudiantes_involucrados",
+            field=models.ManyToManyField(
+                blank=True,
+                limit_choices_to={"tipo_usuario": "estudiante"},
+                related_name="incidentes_involucrado",
+                to="core.perfilusuario",
+            ),
         ),
         migrations.AddField(
-            model_name='incidentreport',
-            name='reportero',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='reportes_realizados', to='core.perfilusuario'),
+            model_name="incidentreport",
+            name="reportero",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="reportes_realizados",
+                to="core.perfilusuario",
+            ),
         ),
         migrations.AddField(
-            model_name='incidentreport',
-            name='testigos',
-            field=models.ManyToManyField(blank=True, related_name='incidentes_testigo', to='core.perfilusuario'),
+            model_name="incidentreport",
+            name="testigos",
+            field=models.ManyToManyField(
+                blank=True, related_name="incidentes_testigo", to="core.perfilusuario"
+            ),
         ),
         migrations.CreateModel(
-            name='Evidence',
+            name="Evidence",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tipo_evidencia', models.CharField(choices=[('documento', 'Documento'), ('foto', 'Fotografía'), ('video', 'Video'), ('audio', 'Audio'), ('testimonio', 'Testimonio Escrito'), ('otro', 'Otro')], default='documento', max_length=15)),
-                ('archivo', models.FileField(blank=True, null=True, upload_to='evidencias/')),
-                ('descripcion', models.CharField(max_length=255)),
-                ('testimonio_texto', models.TextField(blank=True, help_text='Para testimonios escritos')),
-                ('uploaded_at', models.DateTimeField(auto_now_add=True)),
-                ('es_confidencial', models.BooleanField(default=False)),
-                ('reporte', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='evidencias', to='core.incidentreport')),
-                ('subido_por', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='core.perfilusuario')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "tipo_evidencia",
+                    models.CharField(
+                        choices=[
+                            ("documento", "Documento"),
+                            ("foto", "Fotografía"),
+                            ("video", "Video"),
+                            ("audio", "Audio"),
+                            ("testimonio", "Testimonio Escrito"),
+                            ("otro", "Otro"),
+                        ],
+                        default="documento",
+                        max_length=15,
+                    ),
+                ),
+                (
+                    "archivo",
+                    models.FileField(blank=True, null=True, upload_to="evidencias/"),
+                ),
+                ("descripcion", models.CharField(max_length=255)),
+                (
+                    "testimonio_texto",
+                    models.TextField(blank=True, help_text="Para testimonios escritos"),
+                ),
+                ("uploaded_at", models.DateTimeField(auto_now_add=True)),
+                ("es_confidencial", models.BooleanField(default=False)),
+                (
+                    "reporte",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="evidencias",
+                        to="core.incidentreport",
+                    ),
+                ),
+                (
+                    "subido_por",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="core.perfilusuario",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Evidencia',
-                'verbose_name_plural': 'Evidencias',
+                "verbose_name": "Evidencia",
+                "verbose_name_plural": "Evidencias",
             },
         ),
         migrations.CreateModel(
-            name='DenunciaObligatoria',
+            name="DenunciaObligatoria",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('es_constitutivo_delito', models.BooleanField(default=False)),
-                ('tipos_delito', models.JSONField(default=list, help_text='Lista de tipos de delito identificados')),
-                ('fecha_conocimiento', models.DateTimeField(help_text='Fecha en que se toma conocimiento del hecho')),
-                ('fecha_limite_denuncia', models.DateTimeField(help_text='Fecha límite para realizar denuncia (24h)')),
-                ('fecha_denuncia_realizada', models.DateTimeField(blank=True, null=True)),
-                ('autoridad_denunciada', models.CharField(blank=True, choices=[('carabineros', 'Carabineros de Chile'), ('pdi', 'Policía de Investigaciones'), ('fiscalia', 'Fiscalía Local'), ('tribunal_familia', 'Tribunal de Familia')], max_length=20)),
-                ('numero_denuncia', models.CharField(blank=True, max_length=100)),
-                ('documento_denuncia', models.FileField(blank=True, null=True, upload_to='denuncias/')),
-                ('observaciones', models.TextField(blank=True)),
-                ('incidente', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='denuncia_obligatoria', to='core.incidentreport')),
-                ('denunciante_institucional', models.ForeignKey(limit_choices_to={'tipo_usuario__in': ['directivo', 'encargado_convivencia']}, on_delete=django.db.models.deletion.PROTECT, to='core.perfilusuario')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("es_constitutivo_delito", models.BooleanField(default=False)),
+                (
+                    "tipos_delito",
+                    models.JSONField(
+                        default=list, help_text="Lista de tipos de delito identificados"
+                    ),
+                ),
+                (
+                    "fecha_conocimiento",
+                    models.DateTimeField(
+                        help_text="Fecha en que se toma conocimiento del hecho"
+                    ),
+                ),
+                (
+                    "fecha_limite_denuncia",
+                    models.DateTimeField(
+                        help_text="Fecha límite para realizar denuncia (24h)"
+                    ),
+                ),
+                (
+                    "fecha_denuncia_realizada",
+                    models.DateTimeField(blank=True, null=True),
+                ),
+                (
+                    "autoridad_denunciada",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("carabineros", "Carabineros de Chile"),
+                            ("pdi", "Policía de Investigaciones"),
+                            ("fiscalia", "Fiscalía Local"),
+                            ("tribunal_familia", "Tribunal de Familia"),
+                        ],
+                        max_length=20,
+                    ),
+                ),
+                ("numero_denuncia", models.CharField(blank=True, max_length=100)),
+                (
+                    "documento_denuncia",
+                    models.FileField(blank=True, null=True, upload_to="denuncias/"),
+                ),
+                ("observaciones", models.TextField(blank=True)),
+                (
+                    "incidente",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="denuncia_obligatoria",
+                        to="core.incidentreport",
+                    ),
+                ),
+                (
+                    "denunciante_institucional",
+                    models.ForeignKey(
+                        limit_choices_to={
+                            "tipo_usuario__in": ["directivo", "encargado_convivencia"]
+                        },
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="core.perfilusuario",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Denuncia Obligatoria',
-                'verbose_name_plural': 'Denuncias Obligatorias',
+                "verbose_name": "Denuncia Obligatoria",
+                "verbose_name_plural": "Denuncias Obligatorias",
             },
         ),
         migrations.CreateModel(
-            name='AlertaLegal',
+            name="AlertaLegal",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tipo_alerta', models.CharField(choices=[('denuncia_24h', 'Denuncia Obligatoria 24h'), ('notificacion_apoderado_48h', 'Notificación Apoderado 48h'), ('resolucion_caso_10d', 'Resolución de Caso 10 días'), ('seguimiento_medidas_30d', 'Seguimiento Medidas 30 días'), ('vencimiento_apelacion', 'Vencimiento Plazo Apelación'), ('reporte_mineduc', 'Reporte MINEDUC')], max_length=30)),
-                ('fecha_limite', models.DateTimeField()),
-                ('estado', models.CharField(choices=[('activa', 'Activa'), ('enviada', 'Enviada'), ('atendida', 'Atendida'), ('vencida', 'Vencida')], default='activa', max_length=15)),
-                ('mensaje', models.TextField()),
-                ('enviada', models.BooleanField(default=False)),
-                ('fecha_envio', models.DateTimeField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('incidente', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='alertas_legales', to='core.incidentreport')),
-                ('destinatarios', models.ManyToManyField(related_name='alertas_recibidas', to='core.perfilusuario')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "tipo_alerta",
+                    models.CharField(
+                        choices=[
+                            ("denuncia_24h", "Denuncia Obligatoria 24h"),
+                            (
+                                "notificacion_apoderado_48h",
+                                "Notificación Apoderado 48h",
+                            ),
+                            ("resolucion_caso_10d", "Resolución de Caso 10 días"),
+                            ("seguimiento_medidas_30d", "Seguimiento Medidas 30 días"),
+                            ("vencimiento_apelacion", "Vencimiento Plazo Apelación"),
+                            ("reporte_mineduc", "Reporte MINEDUC"),
+                        ],
+                        max_length=30,
+                    ),
+                ),
+                ("fecha_limite", models.DateTimeField()),
+                (
+                    "estado",
+                    models.CharField(
+                        choices=[
+                            ("activa", "Activa"),
+                            ("enviada", "Enviada"),
+                            ("atendida", "Atendida"),
+                            ("vencida", "Vencida"),
+                        ],
+                        default="activa",
+                        max_length=15,
+                    ),
+                ),
+                ("mensaje", models.TextField()),
+                ("enviada", models.BooleanField(default=False)),
+                ("fecha_envio", models.DateTimeField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "incidente",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="alertas_legales",
+                        to="core.incidentreport",
+                    ),
+                ),
+                (
+                    "destinatarios",
+                    models.ManyToManyField(
+                        related_name="alertas_recibidas", to="core.perfilusuario"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Alerta Legal',
-                'verbose_name_plural': 'Alertas Legales',
-                'ordering': ['fecha_limite'],
+                "verbose_name": "Alerta Legal",
+                "verbose_name_plural": "Alertas Legales",
+                "ordering": ["fecha_limite"],
             },
         ),
         migrations.CreateModel(
-            name='ProtocoloProceso',
+            name="ProtocoloProceso",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('gravedad', models.CharField(choices=[('leve', 'Leve'), ('grave', 'Grave'), ('muy_grave', 'Muy Grave')], max_length=15)),
-                ('nombre', models.CharField(max_length=255)),
-                ('descripcion', models.TextField()),
-                ('activo', models.BooleanField(default=True)),
-                ('plazo_total_dias', models.PositiveIntegerField(default=15, help_text='Plazo máximo total del proceso')),
-                ('requiere_aprobacion_director', models.BooleanField(default=False)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('colegio', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.colegio')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "gravedad",
+                    models.CharField(
+                        choices=[
+                            ("leve", "Leve"),
+                            ("grave", "Grave"),
+                            ("muy_grave", "Muy Grave"),
+                        ],
+                        max_length=15,
+                    ),
+                ),
+                ("nombre", models.CharField(max_length=255)),
+                ("descripcion", models.TextField()),
+                ("activo", models.BooleanField(default=True)),
+                (
+                    "plazo_total_dias",
+                    models.PositiveIntegerField(
+                        default=15, help_text="Plazo máximo total del proceso"
+                    ),
+                ),
+                ("requiere_aprobacion_director", models.BooleanField(default=False)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "colegio",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="core.colegio"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Protocolo de Proceso',
-                'verbose_name_plural': 'Protocolos de Proceso',
-                'unique_together': {('colegio', 'gravedad')},
+                "verbose_name": "Protocolo de Proceso",
+                "verbose_name_plural": "Protocolos de Proceso",
+                "unique_together": {("colegio", "gravedad")},
             },
         ),
         migrations.CreateModel(
-            name='ProcesoIncidente',
+            name="ProcesoIncidente",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('estado', models.CharField(choices=[('iniciado', 'Iniciado'), ('en_curso', 'En Curso'), ('pausado', 'Pausado'), ('completado', 'Completado'), ('cancelado', 'Cancelado')], default='iniciado', max_length=15)),
-                ('fecha_inicio', models.DateTimeField(auto_now_add=True)),
-                ('fecha_limite', models.DateTimeField(blank=True, null=True)),
-                ('fecha_completado', models.DateTimeField(blank=True, null=True)),
-                ('observaciones', models.TextField(blank=True)),
-                ('etapa_actual', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='core.etapaprotocolo')),
-                ('incidente', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='proceso', to='core.incidentreport')),
-                ('protocolo', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.protocoloproceso')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "estado",
+                    models.CharField(
+                        choices=[
+                            ("iniciado", "Iniciado"),
+                            ("en_curso", "En Curso"),
+                            ("pausado", "Pausado"),
+                            ("completado", "Completado"),
+                            ("cancelado", "Cancelado"),
+                        ],
+                        default="iniciado",
+                        max_length=15,
+                    ),
+                ),
+                ("fecha_inicio", models.DateTimeField(auto_now_add=True)),
+                ("fecha_limite", models.DateTimeField(blank=True, null=True)),
+                ("fecha_completado", models.DateTimeField(blank=True, null=True)),
+                ("observaciones", models.TextField(blank=True)),
+                (
+                    "etapa_actual",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="core.etapaprotocolo",
+                    ),
+                ),
+                (
+                    "incidente",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="proceso",
+                        to="core.incidentreport",
+                    ),
+                ),
+                (
+                    "protocolo",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="core.protocoloproceso",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Proceso de Incidente',
-                'verbose_name_plural': 'Procesos de Incidente',
+                "verbose_name": "Proceso de Incidente",
+                "verbose_name_plural": "Procesos de Incidente",
             },
         ),
         migrations.AddField(
-            model_name='etapaprotocolo',
-            name='protocolo',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='etapas', to='core.protocoloproceso'),
+            model_name="etapaprotocolo",
+            name="protocolo",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="etapas",
+                to="core.protocoloproceso",
+            ),
         ),
         migrations.CreateModel(
-            name='ReglamentoInterno',
+            name="ReglamentoInterno",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('descripcion_conductas_violencia', models.TextField(help_text='Descripción precisa de conductas que constituyen violencia escolar')),
-                ('procedimientos_gestion_conflictos', models.TextField(help_text='Procedimientos para gestionar conflictos y situaciones de violencia')),
-                ('medidas_pedagogicas_convivencia', models.TextField(help_text='Diversas medidas pedagógicas que fomenten la buena convivencia')),
-                ('procedimiento_reconocimiento_positivo', models.TextField(help_text='Procedimiento de reconocimiento y reforzamiento de conductas positivas')),
-                ('protocolos_violencia_escolar', models.TextField(help_text='Protocolos de actuación para casos de violencia escolar')),
-                ('formas_participacion_comunidad', models.TextField(help_text='Diversas formas de participación de la comunidad educativa')),
-                ('programa_capacitacion', models.TextField(help_text='Programa de capacitación para docentes, asistentes y directivos')),
-                ('version', models.CharField(max_length=10)),
-                ('fecha_aprobacion_consejo_escolar', models.DateField()),
-                ('fecha_vigencia', models.DateField()),
-                ('vigente', models.BooleanField(default=True)),
-                ('archivo_reglamento', models.FileField(blank=True, null=True, upload_to='reglamentos/')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('colegio', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='reglamento_interno', to='core.colegio')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "descripcion_conductas_violencia",
+                    models.TextField(
+                        help_text="Descripción precisa de conductas que constituyen violencia escolar"
+                    ),
+                ),
+                (
+                    "procedimientos_gestion_conflictos",
+                    models.TextField(
+                        help_text="Procedimientos para gestionar conflictos y situaciones de violencia"
+                    ),
+                ),
+                (
+                    "medidas_pedagogicas_convivencia",
+                    models.TextField(
+                        help_text="Diversas medidas pedagógicas que fomenten la buena convivencia"
+                    ),
+                ),
+                (
+                    "procedimiento_reconocimiento_positivo",
+                    models.TextField(
+                        help_text="Procedimiento de reconocimiento y reforzamiento de conductas positivas"
+                    ),
+                ),
+                (
+                    "protocolos_violencia_escolar",
+                    models.TextField(
+                        help_text="Protocolos de actuación para casos de violencia escolar"
+                    ),
+                ),
+                (
+                    "formas_participacion_comunidad",
+                    models.TextField(
+                        help_text="Diversas formas de participación de la comunidad educativa"
+                    ),
+                ),
+                (
+                    "programa_capacitacion",
+                    models.TextField(
+                        help_text="Programa de capacitación para docentes, asistentes y directivos"
+                    ),
+                ),
+                ("version", models.CharField(max_length=10)),
+                ("fecha_aprobacion_consejo_escolar", models.DateField()),
+                ("fecha_vigencia", models.DateField()),
+                ("vigente", models.BooleanField(default=True)),
+                (
+                    "archivo_reglamento",
+                    models.FileField(blank=True, null=True, upload_to="reglamentos/"),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "colegio",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="reglamento_interno",
+                        to="core.colegio",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Reglamento Interno',
-                'verbose_name_plural': 'Reglamentos Internos',
+                "verbose_name": "Reglamento Interno",
+                "verbose_name_plural": "Reglamentos Internos",
             },
         ),
         migrations.CreateModel(
-            name='ResolucionIncidente',
+            name="ResolucionIncidente",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('fundamentacion', models.TextField(help_text='Fundamentos de la resolución')),
-                ('fecha_resolucion', models.DateTimeField()),
-                ('requiere_seguimiento', models.BooleanField(default=True)),
-                ('fecha_seguimiento', models.DateTimeField(blank=True, null=True)),
-                ('incidente', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='resolucion', to='core.incidentreport')),
-                ('medidas_formativas', models.ManyToManyField(blank=True, to='core.medidaformativa')),
-                ('resuelto_por', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.perfilusuario')),
-                ('sanciones', models.ManyToManyField(blank=True, to='core.sancion')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "fundamentacion",
+                    models.TextField(help_text="Fundamentos de la resolución"),
+                ),
+                ("fecha_resolucion", models.DateTimeField()),
+                ("requiere_seguimiento", models.BooleanField(default=True)),
+                ("fecha_seguimiento", models.DateTimeField(blank=True, null=True)),
+                (
+                    "incidente",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="resolucion",
+                        to="core.incidentreport",
+                    ),
+                ),
+                (
+                    "medidas_formativas",
+                    models.ManyToManyField(blank=True, to="core.medidaformativa"),
+                ),
+                (
+                    "resuelto_por",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="core.perfilusuario",
+                    ),
+                ),
+                ("sanciones", models.ManyToManyField(blank=True, to="core.sancion")),
             ],
             options={
-                'verbose_name': 'Resolución de Incidente',
-                'verbose_name_plural': 'Resoluciones de Incidente',
+                "verbose_name": "Resolución de Incidente",
+                "verbose_name_plural": "Resoluciones de Incidente",
             },
         ),
         migrations.CreateModel(
-            name='SeguimientoLegal',
+            name="SeguimientoLegal",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('clasificacion_legal', models.CharField(choices=[('tipo_i_leve', 'Tipo I - Situación Leve'), ('tipo_ii_grave', 'Tipo II - Situación Grave'), ('tipo_iii_muy_grave', 'Tipo III - Situación Muy Grave'), ('constitutivo_delito', 'Constitutivo de Delito')], max_length=20)),
-                ('protocolo_aplicado', models.CharField(blank=True, max_length=255)),
-                ('fecha_inicio_protocolo', models.DateTimeField()),
-                ('fecha_limite_protocolo', models.DateTimeField()),
-                ('etapa_denuncia_completada', models.BooleanField(default=False)),
-                ('etapa_medidas_urgentes_completada', models.BooleanField(default=False)),
-                ('etapa_notificacion_completada', models.BooleanField(default=False)),
-                ('etapa_investigacion_completada', models.BooleanField(default=False)),
-                ('etapa_resolucion_completada', models.BooleanField(default=False)),
-                ('etapa_apelacion_disponible', models.BooleanField(default=True)),
-                ('etapa_seguimiento_completada', models.BooleanField(default=False)),
-                ('notificado_apoderado', models.BooleanField(default=False)),
-                ('fecha_notificacion_apoderado', models.DateTimeField(blank=True, null=True)),
-                ('notificado_mineduc', models.BooleanField(default=False)),
-                ('fecha_notificacion_mineduc', models.DateTimeField(blank=True, null=True)),
-                ('denunciado_autoridades', models.BooleanField(default=False)),
-                ('fecha_denuncia_autoridades', models.DateTimeField(blank=True, null=True)),
-                ('medidas_proteccion_aplicadas', models.TextField(blank=True)),
-                ('medidas_formativas_aplicadas', models.TextField(blank=True)),
-                ('sanciones_aplicadas', models.TextField(blank=True)),
-                ('documentos_proceso', models.FileField(blank=True, null=True, upload_to='procesos_legales/')),
-                ('actas_generadas', models.TextField(blank=True, help_text='Lista de actas y documentos generados')),
-                ('cumple_normativa', models.BooleanField(default=False)),
-                ('observaciones_cumplimiento', models.TextField(blank=True)),
-                ('incidente', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='seguimiento_legal', to='core.incidentreport')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "clasificacion_legal",
+                    models.CharField(
+                        choices=[
+                            ("tipo_i_leve", "Tipo I - Situación Leve"),
+                            ("tipo_ii_grave", "Tipo II - Situación Grave"),
+                            ("tipo_iii_muy_grave", "Tipo III - Situación Muy Grave"),
+                            ("constitutivo_delito", "Constitutivo de Delito"),
+                        ],
+                        max_length=20,
+                    ),
+                ),
+                ("protocolo_aplicado", models.CharField(blank=True, max_length=255)),
+                ("fecha_inicio_protocolo", models.DateTimeField()),
+                ("fecha_limite_protocolo", models.DateTimeField()),
+                ("etapa_denuncia_completada", models.BooleanField(default=False)),
+                (
+                    "etapa_medidas_urgentes_completada",
+                    models.BooleanField(default=False),
+                ),
+                ("etapa_notificacion_completada", models.BooleanField(default=False)),
+                ("etapa_investigacion_completada", models.BooleanField(default=False)),
+                ("etapa_resolucion_completada", models.BooleanField(default=False)),
+                ("etapa_apelacion_disponible", models.BooleanField(default=True)),
+                ("etapa_seguimiento_completada", models.BooleanField(default=False)),
+                ("notificado_apoderado", models.BooleanField(default=False)),
+                (
+                    "fecha_notificacion_apoderado",
+                    models.DateTimeField(blank=True, null=True),
+                ),
+                ("notificado_mineduc", models.BooleanField(default=False)),
+                (
+                    "fecha_notificacion_mineduc",
+                    models.DateTimeField(blank=True, null=True),
+                ),
+                ("denunciado_autoridades", models.BooleanField(default=False)),
+                (
+                    "fecha_denuncia_autoridades",
+                    models.DateTimeField(blank=True, null=True),
+                ),
+                ("medidas_proteccion_aplicadas", models.TextField(blank=True)),
+                ("medidas_formativas_aplicadas", models.TextField(blank=True)),
+                ("sanciones_aplicadas", models.TextField(blank=True)),
+                (
+                    "documentos_proceso",
+                    models.FileField(
+                        blank=True, null=True, upload_to="procesos_legales/"
+                    ),
+                ),
+                (
+                    "actas_generadas",
+                    models.TextField(
+                        blank=True, help_text="Lista de actas y documentos generados"
+                    ),
+                ),
+                ("cumple_normativa", models.BooleanField(default=False)),
+                ("observaciones_cumplimiento", models.TextField(blank=True)),
+                (
+                    "incidente",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="seguimiento_legal",
+                        to="core.incidentreport",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Seguimiento Legal',
-                'verbose_name_plural': 'Seguimientos Legales',
+                "verbose_name": "Seguimiento Legal",
+                "verbose_name_plural": "Seguimientos Legales",
             },
         ),
         migrations.AddField(
-            model_name='incidentreport',
-            name='tipo_incidente',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.tipoincidente'),
+            model_name="incidentreport",
+            name="tipo_incidente",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT, to="core.tipoincidente"
+            ),
         ),
         migrations.CreateModel(
-            name='CumplimientoLey20536',
+            name="CumplimientoLey20536",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('periodo_inicio', models.DateField()),
-                ('periodo_fin', models.DateField()),
-                ('total_casos', models.PositiveIntegerField(default=0)),
-                ('casos_requieren_denuncia', models.PositiveIntegerField(default=0)),
-                ('denuncias_en_plazo', models.PositiveIntegerField(default=0)),
-                ('casos_notificados_plazo', models.PositiveIntegerField(default=0)),
-                ('casos_resueltos_plazo', models.PositiveIntegerField(default=0)),
-                ('medidas_proporcionales', models.PositiveIntegerField(default=0)),
-                ('debido_proceso_completo', models.PositiveIntegerField(default=0)),
-                ('porcentaje_denuncias_plazo', models.DecimalField(decimal_places=2, default=0, max_digits=5)),
-                ('porcentaje_notificaciones_plazo', models.DecimalField(decimal_places=2, default=0, max_digits=5)),
-                ('porcentaje_resoluciones_plazo', models.DecimalField(decimal_places=2, default=0, max_digits=5)),
-                ('porcentaje_debido_proceso', models.DecimalField(decimal_places=2, default=0, max_digits=5)),
-                ('cumplimiento_general', models.DecimalField(decimal_places=2, default=0, max_digits=5)),
-                ('generado_automaticamente', models.BooleanField(default=True)),
-                ('fecha_generacion', models.DateTimeField(auto_now_add=True)),
-                ('colegio', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cumplimiento_ley', to='core.colegio')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("periodo_inicio", models.DateField()),
+                ("periodo_fin", models.DateField()),
+                ("total_casos", models.PositiveIntegerField(default=0)),
+                ("casos_requieren_denuncia", models.PositiveIntegerField(default=0)),
+                ("denuncias_en_plazo", models.PositiveIntegerField(default=0)),
+                ("casos_notificados_plazo", models.PositiveIntegerField(default=0)),
+                ("casos_resueltos_plazo", models.PositiveIntegerField(default=0)),
+                ("medidas_proporcionales", models.PositiveIntegerField(default=0)),
+                ("debido_proceso_completo", models.PositiveIntegerField(default=0)),
+                (
+                    "porcentaje_denuncias_plazo",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=5),
+                ),
+                (
+                    "porcentaje_notificaciones_plazo",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=5),
+                ),
+                (
+                    "porcentaje_resoluciones_plazo",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=5),
+                ),
+                (
+                    "porcentaje_debido_proceso",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=5),
+                ),
+                (
+                    "cumplimiento_general",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=5),
+                ),
+                ("generado_automaticamente", models.BooleanField(default=True)),
+                ("fecha_generacion", models.DateTimeField(auto_now_add=True)),
+                (
+                    "colegio",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="cumplimiento_ley",
+                        to="core.colegio",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Cumplimiento Ley 20.536',
-                'verbose_name_plural': 'Cumplimientos Ley 20.536',
-                'unique_together': {('colegio', 'periodo_inicio', 'periodo_fin')},
+                "verbose_name": "Cumplimiento Ley 20.536",
+                "verbose_name_plural": "Cumplimientos Ley 20.536",
+                "unique_together": {("colegio", "periodo_inicio", "periodo_fin")},
             },
         ),
         migrations.CreateModel(
-            name='AccesoIdentidadDenunciante',
+            name="AccesoIdentidadDenunciante",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tipo_acceso', models.CharField(choices=[('automatico', 'Acceso Automático por Rol'), ('otorgado', 'Acceso Otorgado Específicamente'), ('judicial', 'Acceso por Orden Judicial'), ('emergencia', 'Acceso de Emergencia')], max_length=15)),
-                ('fecha_autorizacion', models.DateTimeField(auto_now_add=True)),
-                ('motivo', models.TextField(blank=True)),
-                ('fecha_primer_acceso', models.DateTimeField(blank=True, null=True)),
-                ('fecha_ultimo_acceso', models.DateTimeField(blank=True, null=True)),
-                ('numero_accesos', models.PositiveIntegerField(default=0)),
-                ('activo', models.BooleanField(default=True)),
-                ('fecha_expiracion', models.DateTimeField(blank=True, null=True)),
-                ('incidente', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='accesos_identidad', to='core.incidentreport')),
-                ('autorizado_por', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='accesos_autorizados', to='core.perfilusuario')),
-                ('usuario_autorizado', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.perfilusuario')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "tipo_acceso",
+                    models.CharField(
+                        choices=[
+                            ("automatico", "Acceso Automático por Rol"),
+                            ("otorgado", "Acceso Otorgado Específicamente"),
+                            ("judicial", "Acceso por Orden Judicial"),
+                            ("emergencia", "Acceso de Emergencia"),
+                        ],
+                        max_length=15,
+                    ),
+                ),
+                ("fecha_autorizacion", models.DateTimeField(auto_now_add=True)),
+                ("motivo", models.TextField(blank=True)),
+                ("fecha_primer_acceso", models.DateTimeField(blank=True, null=True)),
+                ("fecha_ultimo_acceso", models.DateTimeField(blank=True, null=True)),
+                ("numero_accesos", models.PositiveIntegerField(default=0)),
+                ("activo", models.BooleanField(default=True)),
+                ("fecha_expiracion", models.DateTimeField(blank=True, null=True)),
+                (
+                    "incidente",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="accesos_identidad",
+                        to="core.incidentreport",
+                    ),
+                ),
+                (
+                    "autorizado_por",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="accesos_autorizados",
+                        to="core.perfilusuario",
+                    ),
+                ),
+                (
+                    "usuario_autorizado",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="core.perfilusuario",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Acceso a Identidad de Denunciante',
-                'verbose_name_plural': 'Accesos a Identidad de Denunciante',
-                'unique_together': {('incidente', 'usuario_autorizado')},
+                "verbose_name": "Acceso a Identidad de Denunciante",
+                "verbose_name_plural": "Accesos a Identidad de Denunciante",
+                "unique_together": {("incidente", "usuario_autorizado")},
             },
         ),
         migrations.CreateModel(
-            name='PlazoLegal',
+            name="PlazoLegal",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tipo_plazo', models.CharField(choices=[('notificacion_apoderado', 'Notificación a Apoderado'), ('investigacion_completa', 'Investigación Completa'), ('resolucion_caso', 'Resolución del Caso'), ('denuncia_autoridades', 'Denuncia a Autoridades'), ('reporte_mineduc', 'Reporte a MINEDUC'), ('seguimiento_medidas', 'Seguimiento de Medidas'), ('apelacion', 'Plazo de Apelación')], max_length=25)),
-                ('plazo_horas', models.PositiveIntegerField()),
-                ('es_plazo_habiles', models.BooleanField(default=True)),
-                ('fecha_inicio', models.DateTimeField()),
-                ('fecha_limite', models.DateTimeField()),
-                ('estado', models.CharField(choices=[('pendiente', 'Pendiente'), ('en_curso', 'En Curso'), ('cumplido', 'Cumplido'), ('vencido', 'Vencido'), ('prorrogado', 'Prorrogado')], default='pendiente', max_length=15)),
-                ('fecha_cumplimiento', models.DateTimeField(blank=True, null=True)),
-                ('observaciones', models.TextField(blank=True)),
-                ('fecha_prorroga', models.DateTimeField(blank=True, null=True)),
-                ('justificacion_prorroga', models.TextField(blank=True)),
-                ('autorizada_por', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='prorrogas_autorizadas', to='core.perfilusuario')),
-                ('incidente', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='plazos_legales', to='core.incidentreport')),
-                ('responsable', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.perfilusuario')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "tipo_plazo",
+                    models.CharField(
+                        choices=[
+                            ("notificacion_apoderado", "Notificación a Apoderado"),
+                            ("investigacion_completa", "Investigación Completa"),
+                            ("resolucion_caso", "Resolución del Caso"),
+                            ("denuncia_autoridades", "Denuncia a Autoridades"),
+                            ("reporte_mineduc", "Reporte a MINEDUC"),
+                            ("seguimiento_medidas", "Seguimiento de Medidas"),
+                            ("apelacion", "Plazo de Apelación"),
+                        ],
+                        max_length=25,
+                    ),
+                ),
+                ("plazo_horas", models.PositiveIntegerField()),
+                ("es_plazo_habiles", models.BooleanField(default=True)),
+                ("fecha_inicio", models.DateTimeField()),
+                ("fecha_limite", models.DateTimeField()),
+                (
+                    "estado",
+                    models.CharField(
+                        choices=[
+                            ("pendiente", "Pendiente"),
+                            ("en_curso", "En Curso"),
+                            ("cumplido", "Cumplido"),
+                            ("vencido", "Vencido"),
+                            ("prorrogado", "Prorrogado"),
+                        ],
+                        default="pendiente",
+                        max_length=15,
+                    ),
+                ),
+                ("fecha_cumplimiento", models.DateTimeField(blank=True, null=True)),
+                ("observaciones", models.TextField(blank=True)),
+                ("fecha_prorroga", models.DateTimeField(blank=True, null=True)),
+                ("justificacion_prorroga", models.TextField(blank=True)),
+                (
+                    "autorizada_por",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="prorrogas_autorizadas",
+                        to="core.perfilusuario",
+                    ),
+                ),
+                (
+                    "incidente",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="plazos_legales",
+                        to="core.incidentreport",
+                    ),
+                ),
+                (
+                    "responsable",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="core.perfilusuario",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Plazo Legal',
-                'verbose_name_plural': 'Plazos Legales',
-                'unique_together': {('incidente', 'tipo_plazo')},
+                "verbose_name": "Plazo Legal",
+                "verbose_name_plural": "Plazos Legales",
+                "unique_together": {("incidente", "tipo_plazo")},
             },
         ),
         migrations.CreateModel(
-            name='EjecucionEtapa',
+            name="EjecucionEtapa",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('estado', models.CharField(choices=[('pendiente', 'Pendiente'), ('en_curso', 'En Curso'), ('completada', 'Completada'), ('omitida', 'Omitida'), ('vencida', 'Vencida')], default='pendiente', max_length=15)),
-                ('fecha_inicio', models.DateTimeField(blank=True, null=True)),
-                ('fecha_limite', models.DateTimeField(blank=True, null=True)),
-                ('fecha_completada', models.DateTimeField(blank=True, null=True)),
-                ('observaciones', models.TextField(blank=True)),
-                ('archivos_adjuntos', models.FileField(blank=True, null=True, upload_to='etapas/')),
-                ('modificada_por_anonimato', models.BooleanField(default=False)),
-                ('etapa', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.etapaprotocolo')),
-                ('ejecutado_por', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='core.perfilusuario')),
-                ('proceso', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ejecuciones', to='core.procesoincidente')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "estado",
+                    models.CharField(
+                        choices=[
+                            ("pendiente", "Pendiente"),
+                            ("en_curso", "En Curso"),
+                            ("completada", "Completada"),
+                            ("omitida", "Omitida"),
+                            ("vencida", "Vencida"),
+                        ],
+                        default="pendiente",
+                        max_length=15,
+                    ),
+                ),
+                ("fecha_inicio", models.DateTimeField(blank=True, null=True)),
+                ("fecha_limite", models.DateTimeField(blank=True, null=True)),
+                ("fecha_completada", models.DateTimeField(blank=True, null=True)),
+                ("observaciones", models.TextField(blank=True)),
+                (
+                    "archivos_adjuntos",
+                    models.FileField(blank=True, null=True, upload_to="etapas/"),
+                ),
+                ("modificada_por_anonimato", models.BooleanField(default=False)),
+                (
+                    "etapa",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="core.etapaprotocolo",
+                    ),
+                ),
+                (
+                    "ejecutado_por",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="core.perfilusuario",
+                    ),
+                ),
+                (
+                    "proceso",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="ejecuciones",
+                        to="core.procesoincidente",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Ejecución de Etapa',
-                'verbose_name_plural': 'Ejecuciones de Etapa',
-                'unique_together': {('proceso', 'etapa')},
+                "verbose_name": "Ejecución de Etapa",
+                "verbose_name_plural": "Ejecuciones de Etapa",
+                "unique_together": {("proceso", "etapa")},
             },
         ),
         migrations.AlterUniqueTogether(
-            name='etapaprotocolo',
-            unique_together={('protocolo', 'orden')},
+            name="etapaprotocolo",
+            unique_together={("protocolo", "orden")},
         ),
         migrations.CreateModel(
-            name='ReglasAnonimato',
+            name="ReglasAnonimato",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nivel_anonimato', models.CharField(choices=[('publico', 'Público - Mi identidad puede ser conocida'), ('restringido', 'Restringido - Solo autoridades del colegio'), ('confidencial', 'Confidencial - Solo Encargado de Convivencia'), ('judicial', 'Judicial - Solo para efectos legales')], max_length=20)),
-                ('roles_con_acceso', models.TextField(help_text='Roles separados por coma que pueden ver la identidad')),
-                ('requiere_aprobacion', models.BooleanField(default=False, help_text='¿Requiere aprobación adicional?')),
-                ('notificar_acceso', models.BooleanField(default=True, help_text='¿Notificar al denunciante sobre accesos?')),
-                ('plazo_acceso_horas', models.PositiveIntegerField(default=24, help_text='Horas máximas para mantener acceso')),
-                ('colegio', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.colegio')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "nivel_anonimato",
+                    models.CharField(
+                        choices=[
+                            ("publico", "Público - Mi identidad puede ser conocida"),
+                            (
+                                "restringido",
+                                "Restringido - Solo autoridades del colegio",
+                            ),
+                            (
+                                "confidencial",
+                                "Confidencial - Solo Encargado de Convivencia",
+                            ),
+                            ("judicial", "Judicial - Solo para efectos legales"),
+                        ],
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "roles_con_acceso",
+                    models.TextField(
+                        help_text="Roles separados por coma que pueden ver la identidad"
+                    ),
+                ),
+                (
+                    "requiere_aprobacion",
+                    models.BooleanField(
+                        default=False, help_text="¿Requiere aprobación adicional?"
+                    ),
+                ),
+                (
+                    "notificar_acceso",
+                    models.BooleanField(
+                        default=True,
+                        help_text="¿Notificar al denunciante sobre accesos?",
+                    ),
+                ),
+                (
+                    "plazo_acceso_horas",
+                    models.PositiveIntegerField(
+                        default=24, help_text="Horas máximas para mantener acceso"
+                    ),
+                ),
+                (
+                    "colegio",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="core.colegio"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Regla de Anonimato',
-                'verbose_name_plural': 'Reglas de Anonimato',
-                'unique_together': {('colegio', 'nivel_anonimato')},
+                "verbose_name": "Regla de Anonimato",
+                "verbose_name_plural": "Reglas de Anonimato",
+                "unique_together": {("colegio", "nivel_anonimato")},
             },
         ),
         migrations.CreateModel(
-            name='ReporteMINEDUC',
+            name="ReporteMINEDUC",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tipo_reporte', models.CharField(choices=[('mensual', 'Reporte Mensual'), ('trimestral', 'Reporte Trimestral'), ('semestral', 'Reporte Semestral'), ('anual', 'Reporte Anual'), ('caso_grave', 'Reporte Caso Grave'), ('seguimiento', 'Reporte de Seguimiento')], max_length=15)),
-                ('periodo_inicio', models.DateField()),
-                ('periodo_fin', models.DateField()),
-                ('total_casos', models.PositiveIntegerField(default=0)),
-                ('casos_tipo_i', models.PositiveIntegerField(default=0)),
-                ('casos_tipo_ii', models.PositiveIntegerField(default=0)),
-                ('casos_tipo_iii', models.PositiveIntegerField(default=0)),
-                ('casos_delito', models.PositiveIntegerField(default=0)),
-                ('medidas_formativas_aplicadas', models.PositiveIntegerField(default=0)),
-                ('sanciones_aplicadas', models.PositiveIntegerField(default=0)),
-                ('derivaciones_externas', models.PositiveIntegerField(default=0)),
-                ('estado', models.CharField(choices=[('borrador', 'Borrador'), ('generado', 'Generado'), ('enviado', 'Enviado'), ('recibido', 'Recibido por MINEDUC')], default='borrador', max_length=15)),
-                ('archivo_reporte', models.FileField(blank=True, null=True, upload_to='reportes_mineduc/')),
-                ('numero_seguimiento_mineduc', models.CharField(blank=True, max_length=100)),
-                ('fecha_generacion', models.DateTimeField(blank=True, null=True)),
-                ('fecha_envio', models.DateTimeField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('colegio', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reportes_mineduc', to='core.colegio')),
-                ('generado_por', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.perfilusuario')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "tipo_reporte",
+                    models.CharField(
+                        choices=[
+                            ("mensual", "Reporte Mensual"),
+                            ("trimestral", "Reporte Trimestral"),
+                            ("semestral", "Reporte Semestral"),
+                            ("anual", "Reporte Anual"),
+                            ("caso_grave", "Reporte Caso Grave"),
+                            ("seguimiento", "Reporte de Seguimiento"),
+                        ],
+                        max_length=15,
+                    ),
+                ),
+                ("periodo_inicio", models.DateField()),
+                ("periodo_fin", models.DateField()),
+                ("total_casos", models.PositiveIntegerField(default=0)),
+                ("casos_tipo_i", models.PositiveIntegerField(default=0)),
+                ("casos_tipo_ii", models.PositiveIntegerField(default=0)),
+                ("casos_tipo_iii", models.PositiveIntegerField(default=0)),
+                ("casos_delito", models.PositiveIntegerField(default=0)),
+                (
+                    "medidas_formativas_aplicadas",
+                    models.PositiveIntegerField(default=0),
+                ),
+                ("sanciones_aplicadas", models.PositiveIntegerField(default=0)),
+                ("derivaciones_externas", models.PositiveIntegerField(default=0)),
+                (
+                    "estado",
+                    models.CharField(
+                        choices=[
+                            ("borrador", "Borrador"),
+                            ("generado", "Generado"),
+                            ("enviado", "Enviado"),
+                            ("recibido", "Recibido por MINEDUC"),
+                        ],
+                        default="borrador",
+                        max_length=15,
+                    ),
+                ),
+                (
+                    "archivo_reporte",
+                    models.FileField(
+                        blank=True, null=True, upload_to="reportes_mineduc/"
+                    ),
+                ),
+                (
+                    "numero_seguimiento_mineduc",
+                    models.CharField(blank=True, max_length=100),
+                ),
+                ("fecha_generacion", models.DateTimeField(blank=True, null=True)),
+                ("fecha_envio", models.DateTimeField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "colegio",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="reportes_mineduc",
+                        to="core.colegio",
+                    ),
+                ),
+                (
+                    "generado_por",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="core.perfilusuario",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Reporte MINEDUC',
-                'verbose_name_plural': 'Reportes MINEDUC',
-                'unique_together': {('colegio', 'tipo_reporte', 'periodo_inicio')},
+                "verbose_name": "Reporte MINEDUC",
+                "verbose_name_plural": "Reportes MINEDUC",
+                "unique_together": {("colegio", "tipo_reporte", "periodo_inicio")},
             },
         ),
     ]

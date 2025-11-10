@@ -7,18 +7,34 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0001_initial'),
+        ("core", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='customuser',
-            name='role',
-            field=models.CharField(choices=[('admin', 'Administrador del Sistema'), ('sostenedor', 'Sostenedor'), ('director', 'Director'), ('encargado_convivencia', 'Encargado de Convivencia Escolar'), ('inspector', 'Inspector General'), ('profesor', 'Profesor'), ('orientador', 'Orientador'), ('apoderado', 'Apoderado'), ('auxiliar', 'Personal de Apoyo/Auxiliar')], default='encargado_convivencia', max_length=25),
+            model_name="customuser",
+            name="role",
+            field=models.CharField(
+                choices=[
+                    ("admin", "Administrador del Sistema"),
+                    ("sostenedor", "Sostenedor"),
+                    ("director", "Director"),
+                    ("encargado_convivencia", "Encargado de Convivencia Escolar"),
+                    ("inspector", "Inspector General"),
+                    ("profesor", "Profesor"),
+                    ("orientador", "Orientador"),
+                    ("apoderado", "Apoderado"),
+                    ("auxiliar", "Personal de Apoyo/Auxiliar"),
+                ],
+                default="encargado_convivencia",
+                max_length=25,
+            ),
         ),
         migrations.AlterField(
-            model_name='evidence',
-            name='archivo',
-            field=models.FileField(blank=True, null=True, upload_to=core.models.evidencia_upload_path),
+            model_name="evidence",
+            name="archivo",
+            field=models.FileField(
+                blank=True, null=True, upload_to=core.models.evidencia_upload_path
+            ),
         ),
     ]

@@ -7,13 +7,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0002_alter_customuser_role_alter_evidence_archivo'),
+        ("core", "0002_alter_customuser_role_alter_evidence_archivo"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='denunciaobligatoria',
-            name='denunciante_institucional',
-            field=models.ForeignKey(blank=True, limit_choices_to={'tipo_usuario__in': ['directivo', 'encargado_convivencia']}, null=True, on_delete=django.db.models.deletion.PROTECT, to='core.perfilusuario'),
+            model_name="denunciaobligatoria",
+            name="denunciante_institucional",
+            field=models.ForeignKey(
+                blank=True,
+                limit_choices_to={
+                    "tipo_usuario__in": ["directivo", "encargado_convivencia"]
+                },
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="core.perfilusuario",
+            ),
         ),
     ]

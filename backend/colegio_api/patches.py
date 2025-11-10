@@ -12,8 +12,9 @@ Some Django internals (``Context.__init__``) assign to
 getter lazily creates a ``RenderContext`` per-instance.
 """
 
-from django.template import context as template_context
 from contextlib import contextmanager
+
+from django.template import context as template_context
 
 
 def ensure_basecontext_template_attr():
@@ -45,9 +46,12 @@ def ensure_basecontext_template_attr():
     # required by Django's template tags: push a mapping and return the
     # ContextDict object.
     if not hasattr(BaseContext, "update"):
+
         def _update(self, other_dict):
             if not hasattr(other_dict, "__getitem__"):
-                raise TypeError("other_dict must be a mapping (dictionary-like) object.")
+                raise TypeError(
+                    "other_dict must be a mapping (dictionary-like) object."
+                )
             # If a BaseContext is passed, extract its dict (compat with
             # Context.update behavior).
             if isinstance(other_dict, template_context.BaseContext):
@@ -76,11 +80,16 @@ def ensure_basecontext_template_attr():
         setattr(self, "_render_context", value)
 
     # Install unconditionally to override any existing read-only property.
-    setattr(BaseContext, "render_context", property(_get_render_context, _set_render_context))
+    setattr(
+        BaseContext,
+        "render_context",
+        property(_get_render_context, _set_render_context),
+    )
 
     # Provide a minimal bind_template context manager on BaseContext so
     # Template.render can use `with context.bind_template(template)` safely.
     if not hasattr(BaseContext, "bind_template"):
+
         @contextmanager
         def _bind_template(self, template):
             prev = getattr(self, "template", None)

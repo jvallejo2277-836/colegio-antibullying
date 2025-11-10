@@ -2,15 +2,16 @@
 import os
 import sys
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         import pymysql
+
         pymysql.install_as_MySQLdb()
     except Exception:
         # PyMySQL not installed yet; manage.py will still try to run and fail later if DB driver missing
         pass
 
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'colegio_api.settings')
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "colegio_api.settings")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
