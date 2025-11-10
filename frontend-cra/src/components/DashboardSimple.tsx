@@ -6,12 +6,10 @@ import {
   Box,
   Card,
   CardContent,
-  Grid,
   CircularProgress,
   Alert,
 } from '@mui/material';
 import {
-  TrendingUp,
   People,
   Assignment,
   CheckCircle,

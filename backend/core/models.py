@@ -74,12 +74,84 @@ class CustomUser(AbstractUser):
     def get_colegios_permitidos(self):
         """Retorna los colegios a los que el usuario tiene acceso"""
         if self.es_admin:
-            return Colegio.objects.all()
+            # Para admins: devolver todos los colegios asignados
+            colegios_asignados = ColegioAsignado.objects.filter(
+                usuario=self, 
+                activo=True
+            ).select_related('colegio')
+            
+            if colegios_asignados.exists():
+                return Colegio.objects.filter(
+                    id__in=colegios_asignados.values_list('colegio_id', flat=True)
+                )
+            else:
+                # Fallback: si no tiene asignaciones específicas, todos los colegios
+                return Colegio.objects.all()
         elif self.colegio:
             # Usuarios de colegio específico
             return Colegio.objects.filter(id=self.colegio.id)
         else:
             return Colegio.objects.none()
+    
+    def get_colegios_asignados(self):
+        """Retorna los colegios asignados específicamente al admin"""
+        return ColegioAsignado.objects.filter(
+            usuario=self,
+            activo=True
+        ).select_related('colegio').order_by('-es_colegio_principal')
+    
+    def get_colegio_principal(self):
+        """Retorna el colegio principal del admin"""
+        try:
+            asignacion = ColegioAsignado.objects.get(
+                usuario=self,
+                es_colegio_principal=True,
+                activo=True
+            )
+            return asignacion.colegio
+        except ColegioAsignado.DoesNotExist:
+            # Fallback al colegio_id si no hay principal definido
+            return self.colegio
+    
+    def asignar_colegio(self, colegio, es_principal=False):
+        """Asigna un colegio al admin"""
+        if self.role != 'admin':
+            raise ValueError("Solo los administradores pueden tener múltiples colegios asignados")
+        
+        asignacion, created = ColegioAsignado.objects.get_or_create(
+            usuario=self,
+            colegio=colegio,
+            defaults={'es_colegio_principal': es_principal, 'activo': True}
+        )
+        
+        if not created:
+            asignacion.activo = True
+            if es_principal:
+                asignacion.es_colegio_principal = True
+            asignacion.save()
+        
+        return asignacion
+    
+    def cambiar_colegio_activo(self, colegio_id):
+        """Cambia el colegio activo para el admin (actualiza colegio_id)"""
+        if self.role != 'admin':
+            return False
+            
+        # Verificar que el admin tiene acceso a este colegio
+        try:
+            asignacion = ColegioAsignado.objects.get(
+                usuario=self,
+                colegio_id=colegio_id,
+                activo=True
+            )
+            
+            # Actualizar el colegio_id del usuario
+            self.colegio_id = colegio_id
+            self.save()
+            return True
+            
+        except ColegioAsignado.DoesNotExist:
+            return False
     
     class Meta:
         verbose_name = "Usuario"
@@ -105,6 +177,66 @@ class Colegio(models.Model):
     class Meta:
         verbose_name = "Colegio"
         verbose_name_plural = "Colegios"
+
+
+class ColegioAsignado(models.Model):
+    """Relación muchos a muchos para usuarios con múltiples colegios (especialmente admins)"""
+    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    colegio = models.ForeignKey(Colegio, on_delete=models.CASCADE)
+    es_colegio_principal = models.BooleanField(
+        default=False,
+        help_text="Indica si es el colegio principal del usuario"
+    )
+    fecha_asignacion = models.DateTimeField(auto_now_add=True)
+    activo = models.BooleanField(default=True)
+    
+    @property
+    def usuario_puede_multiple_colegios(self):
+        """Verifica si el usuario puede tener múltiples colegios"""
+        return self.usuario.role == 'admin'
+    
+    def clean(self):
+        """Validaciones del modelo"""
+        from django.core.exceptions import ValidationError
+        
+        # Solo admins pueden tener múltiples colegios
+        if (self.usuario.role != 'admin' and 
+            ColegioAsignado.objects.filter(usuario=self.usuario, activo=True).count() > 0):
+            raise ValidationError(
+                "Solo los administradores pueden estar asignados a múltiples colegios"
+            )
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+        
+        # Actualizar el colegio_id del usuario si es el principal
+        if self.es_colegio_principal:
+            self.usuario.colegio_id = self.colegio.id
+            self.usuario.save()
+    
+    def __str__(self):
+        principal = " (Principal)" if self.es_colegio_principal else ""
+        return f"{self.usuario.username} -> {self.colegio.nombre}{principal}"
+    
+    class Meta:
+        verbose_name = "Colegio Asignado"
+        verbose_name_plural = "Colegios Asignados"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['usuario', 'colegio'], 
+                name='unique_usuario_colegio'
+            ),
+            models.UniqueConstraint(
+                fields=['usuario'], 
+                condition=models.Q(es_colegio_principal=True),
+                name='unique_colegio_principal_por_usuario'
+            )
+        ]
+        indexes = [
+            models.Index(fields=['usuario', 'activo'], name='core_col_user_activo_idx'),
+            models.Index(fields=['usuario', 'es_colegio_principal'], name='core_col_principal_idx'),
+        ]
 
 
 class TipoIncidente(models.Model):

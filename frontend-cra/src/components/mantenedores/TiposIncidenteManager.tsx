@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Paper,
   Typography,
@@ -64,12 +64,12 @@ const TiposIncidenteManager: React.FC = () => {
   const [categoriasExpandidas, setCategoriasExpandidas] = useState<Record<number, boolean>>({});
 
   // Cargar tipos de incidente
-  const cargarTipos = async () => {
+  const cargarTipos = useCallback(async () => {
     if (!colegioActivo) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       const datos = await tipoIncidenteService.obtenerPorColegio(colegioActivo.id);
       setTipos(datos);
@@ -79,11 +79,11 @@ const TiposIncidenteManager: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [colegioActivo]);
 
   useEffect(() => {
     cargarTipos();
-  }, [colegioActivo]);
+  }, [cargarTipos]);
 
   // Filtrar tipos según búsqueda y filtros
   const tiposFiltrados = tipos.filter(tipo => {

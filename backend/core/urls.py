@@ -18,6 +18,8 @@ from .views import (
     EjecucionEtapaViewSet,
     ReglasAnonimatoViewSet,
     AccesoIdentidadViewSet,
+    # Views para gestión de usuarios
+    UpdateUserColegioView,
 )
 from .auth_views import (
     CustomTokenObtainPairView,
@@ -61,4 +63,7 @@ urlpatterns = [
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('auth/colegios/', user_colegios, name='user-colegios'),
     path('auth/check/', check_auth, name='check-auth'),
+    
+    # Endpoint para actualizar colegio asignado
+    path('usuarios/<int:user_id>/colegio/', UpdateUserColegioView.as_view(), name='update-user-colegio'),
 ]

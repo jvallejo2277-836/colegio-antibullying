@@ -44,7 +44,7 @@ import {
   Category as CategoryIcon,
   Gavel as GavelIcon,
   Psychology as PsychologyIcon,
-  Business as BusinessIcon,
+
   ExpandLess,
   ExpandMore,
   Assignment as AssignmentIcon,
@@ -101,7 +101,7 @@ function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
-  const { colegioActivo, colegiosDisponibles, necesitaSeleccionColegio } = useColegio();
+  const { necesitaSeleccionColegio } = useColegio();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [operacionesOpen, setOperacionesOpen] = React.useState(false);
   const [protocolosOpen, setProtocolosOpen] = React.useState(false);
@@ -145,7 +145,6 @@ function AppContent() {
       icon: <WarningIcon />,
       path: '/antibullying',
     },
-
     {
       text: 'Operaciones',
       icon: <ReportIcon />,

@@ -94,7 +94,7 @@ class TipoIncidenteViewSet(viewsets.ModelViewSet):
         """Filtrar tipos de incidente según el contexto del usuario"""
         queryset = super().get_queryset()
         
-        # Si el usuario especifica un colegio en los parámetros
+        # Si el usuario especifica un colegio en los parámetros, filtrar por ese colegio
         colegio_id = self.request.query_params.get('colegio', None)
         if colegio_id:
             # Incluir tipos legales (sin colegio específico) + tipos del colegio específico
@@ -102,7 +102,7 @@ class TipoIncidenteViewSet(viewsets.ModelViewSet):
                 Q(colegio__isnull=True) | Q(colegio_id=colegio_id)
             )
         
-        return queryset.filter(activo=True).order_by('categoria', 'nombre')
+        return queryset.filter(activo=True).order_by('es_categoria_legal', 'categoria', 'nombre')
 
     def perform_create(self, serializer):
         """Personalizar creación de tipos de incidente"""
@@ -142,11 +142,27 @@ class TipoIncidenteViewSet(viewsets.ModelViewSet):
         if not colegio_id:
             return Response({'error': 'colegio_id es requerido'}, status=400)
         
-        # Tipos legales + tipos específicos del colegio
-        tipos = self.get_queryset().filter(
-            Q(colegio__isnull=True) | Q(colegio_id=colegio_id)
+        # SOLUCIÓN DIRECTA: obtener tipos legales Y tipos del colegio por separado
+        from django.db.models import Q
+        
+        # 1. Tipos legales (sin colegio específico)
+        tipos_legales = TipoIncidente.objects.filter(
+            es_categoria_legal=True,
+            colegio__isnull=True,
+            activo=True
         )
-        serializer = self.get_serializer(tipos, many=True)
+        
+        # 2. Tipos específicos del colegio
+        tipos_colegio = TipoIncidente.objects.filter(
+            colegio_id=colegio_id,
+            activo=True
+        )
+        
+        # 3. Combinar ambos querysets
+        tipos_combinados = list(tipos_legales) + list(tipos_colegio)
+        
+        # 4. Serializar resultado combinado
+        serializer = self.get_serializer(tipos_combinados, many=True)
         return Response(serializer.data)
 
 
@@ -447,4 +463,67 @@ class AccesoIdentidadViewSet(viewsets.ModelViewSet):
 # =============================================================================
 # VIEWSETS PARA GESTIÓN DE USUARIOS Y SOSTENEDORES
 # =============================================================================
+
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from .models import CustomUser
+
+class UpdateUserColegioView(APIView):
+    """
+    View para actualizar el colegio asignado de un usuario (especialmente admin)
+    Implementa la lógica mono-colegio donde admin puede cambiar su contexto de trabajo
+    """
+    permission_classes = [IsAuthenticated]
+    
+    def patch(self, request, user_id, format=None):
+        try:
+            # Verificar que el usuario puede actualizar este colegio
+            user_to_update = CustomUser.objects.get(id=user_id)
+            
+            # Solo el mismo usuario o un admin puede actualizar la asignación
+            if request.user.id != user_to_update.id and request.user.role != 'admin':
+                return Response(
+                    {'error': 'No tienes permisos para actualizar este usuario'}, 
+                    status=status.HTTP_403_FORBIDDEN
+                )
+            
+            # Obtener el nuevo colegio_id del request
+            colegio_id = request.data.get('colegio_id')
+            if not colegio_id:
+                return Response(
+                    {'error': 'colegio_id es requerido'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Verificar que el colegio existe
+            try:
+                colegio = Colegio.objects.get(id=colegio_id)
+            except Colegio.DoesNotExist:
+                return Response(
+                    {'error': f'Colegio con ID {colegio_id} no existe'}, 
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            
+            # Actualizar el colegio del usuario
+            user_to_update.colegio = colegio
+            user_to_update.save()
+            
+            return Response({
+                'success': True,
+                'message': f'Usuario {user_to_update.username} asignado al colegio {colegio.nombre}',
+                'user_id': user_to_update.id,
+                'colegio_id': colegio.id,
+                'colegio_nombre': colegio.nombre
+            }, status=status.HTTP_200_OK)
+            
+        except CustomUser.DoesNotExist:
+            return Response(
+                {'error': f'Usuario con ID {user_id} no encontrado'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {'error': f'Error interno: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 

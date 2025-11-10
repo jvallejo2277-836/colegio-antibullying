@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -19,7 +19,7 @@ import {
   TableRow,
   Paper,
   Alert,
-  Divider,
+  
   Stack,
   Container
 } from '@mui/material';
@@ -60,6 +60,48 @@ interface EstadisticasResumen {
   porcentajeCrecimiento: number;
 }
 
+// Datos mock globales (moved outside component to avoid changing references each render)
+const mockReportes: ReporteIncidente[] = [
+  {
+    id: 1,
+    fecha: '2025-11-01',
+    tipo: 'ACOSO_VERBAL',
+    gravedad: 'GRAVE',
+    colegio: 'Liceo Experimental Manuel de Salas',
+    estado: 'EN_INVESTIGACION',
+    requiere_denuncia_obligatoria: true,
+    descripcion: 'Incidente de acoso verbal entre estudiantes'
+  },
+  {
+    id: 2,
+    fecha: '2025-11-02',
+    tipo: 'CYBERBULLYING',
+    gravedad: 'GRAVISIMA',
+    colegio: 'Colegio San Patricio',
+    estado: 'ABIERTO',
+    requiere_denuncia_obligatoria: true,
+    descripcion: 'Caso de cyberbullying en redes sociales'
+  },
+  {
+    id: 3,
+    fecha: '2025-11-03',
+    tipo: 'EXCLUSION_SOCIAL',
+    gravedad: 'LEVE',
+    colegio: 'Instituto Nacional',
+    estado: 'CERRADO',
+    requiere_denuncia_obligatoria: false,
+    descripcion: 'Exclusión social en actividades grupales'
+  }
+];
+
+const mockEstadisticas: EstadisticasResumen = {
+  totalIncidentes: 45,
+  incidentesGraves: 12,
+  denunciasObligatorias: 8,
+  casosAbiertos: 15,
+  porcentajeCrecimiento: -12.5
+};
+
 const ReportesAntibullying: React.FC = () => {
   const [reportes, setReportes] = useState<ReporteIncidente[]>([]);
   const [estadisticas, setEstadisticas] = useState<EstadisticasResumen | null>(null);
@@ -67,53 +109,9 @@ const ReportesAntibullying: React.FC = () => {
   const [gravedadFiltro, setGravedadFiltro] = useState<string>('TODOS');
   const [loading, setLoading] = useState(false);
 
-  // Datos mock para desarrollo
-  const mockReportes: ReporteIncidente[] = [
-    {
-      id: 1,
-      fecha: '2025-11-01',
-      tipo: 'ACOSO_VERBAL',
-      gravedad: 'GRAVE',
-      colegio: 'Liceo Experimental Manuel de Salas',
-      estado: 'EN_INVESTIGACION',
-      requiere_denuncia_obligatoria: true,
-      descripcion: 'Incidente de acoso verbal entre estudiantes'
-    },
-    {
-      id: 2,
-      fecha: '2025-11-02',
-      tipo: 'CYBERBULLYING',
-      gravedad: 'GRAVISIMA',
-      colegio: 'Colegio San Patricio',
-      estado: 'ABIERTO',
-      requiere_denuncia_obligatoria: true,
-      descripcion: 'Caso de cyberbullying en redes sociales'
-    },
-    {
-      id: 3,
-      fecha: '2025-11-03',
-      tipo: 'EXCLUSION_SOCIAL',
-      gravedad: 'LEVE',
-      colegio: 'Instituto Nacional',
-      estado: 'CERRADO',
-      requiere_denuncia_obligatoria: false,
-      descripcion: 'Exclusión social en actividades grupales'
-    }
-  ];
+  
 
-  const mockEstadisticas: EstadisticasResumen = {
-    totalIncidentes: 45,
-    incidentesGraves: 12,
-    denunciasObligatorias: 8,
-    casosAbiertos: 15,
-    porcentajeCrecimiento: -12.5
-  };
-
-  useEffect(() => {
-    cargarDatos();
-  }, []);
-
-  const cargarDatos = async () => {
+  const cargarDatos = useCallback(async () => {
     setLoading(true);
     try {
       // TODO: Reemplazar con llamadas reales al API
@@ -126,7 +124,11 @@ const ReportesAntibullying: React.FC = () => {
       console.error('Error cargando datos:', error);
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    cargarDatos();
+  }, [cargarDatos]);
 
   const reportesFiltrados = reportes.filter(reporte => {
     const coincideTipo = tipoFiltro === 'TODOS' || reporte.tipo === tipoFiltro;

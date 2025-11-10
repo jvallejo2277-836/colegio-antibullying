@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Stack,
@@ -20,11 +20,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Tooltip,
   Tabs,
   Tab,
@@ -34,11 +29,9 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
-  Badge,
   Avatar
 } from '@mui/material';
 import {
-  Add as AddIcon,
   Report as ReportIcon,
   Warning as WarningIcon,
   CheckCircle as CheckCircleIcon,
@@ -46,15 +39,11 @@ import {
   Error as ErrorIcon,
   Visibility as VisibilityIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
-  Send as SendIcon,
-  Person as PersonIcon,
-  School as SchoolIcon,
   AccessTime as AccessTimeIcon,
   Flag as FlagIcon,
   Assignment as AssignmentIcon
 } from '@mui/icons-material';
-import { SnackbarProvider, useSnackbar } from 'notistack';
+import { SnackbarProvider } from 'notistack';
 
 // Interfaces para el sistema antibullying
 interface Denuncia {
@@ -201,9 +190,8 @@ function TabPanel({ children, value, index }: TabPanelProps) {
 }
 
 function AntibullyingDashboardContent() {
-  const { enqueueSnackbar } = useSnackbar();
-  const [denuncias, setDenuncias] = useState<Denuncia[]>(denunciasMock);
-  const [estadisticas, setEstadisticas] = useState<EstadisticasAntibullying>(estadisticasMock);
+  const [denuncias] = useState<Denuncia[]>(denunciasMock);
+  const [estadisticas] = useState<EstadisticasAntibullying>(estadisticasMock);
   const [tabValue, setTabValue] = useState(0);
   const [selectedDenuncia, setSelectedDenuncia] = useState<Denuncia | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -263,7 +251,6 @@ function AntibullyingDashboardContent() {
         Sistema Antibullying - Convivencia Escolar
       </Typography>
       
-      {/* Alerta Legal */}
       <Alert severity="error" sx={{ mb: 3 }}>
         <Typography variant="body2">
           <strong>Ley 20.536 - Art. 16C:</strong> Los directores de establecimientos educacionales deben denunciar 
@@ -382,16 +369,6 @@ function AntibullyingDashboardContent() {
 
       {/* Panel de Denuncias Activas */}
       <TabPanel value={tabValue} index={0}>
-        <Box sx={{ mb: 3 }}>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            color="error"
-          >
-            Nueva Denuncia
-          </Button>
-        </Box>
-
         <TableContainer component={Paper}>
           <Table>
             <TableHead>

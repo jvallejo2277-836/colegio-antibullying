@@ -1,0 +1,255 @@
+<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Author>Asus</Author>
+  <LastAuthor>José Vallejo González</LastAuthor>
+  <Created>2025-11-10T15:48:08Z</Created>
+  <Version>16.00</Version>
+ </DocumentProperties>
+ <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
+  <AllowPNG/>
+ </OfficeDocumentSettings>
+ <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+  <WindowHeight>5196</WindowHeight>
+  <WindowWidth>13032</WindowWidth>
+  <WindowTopX>32767</WindowTopX>
+  <WindowTopY>32767</WindowTopY>
+  <ProtectStructure>False</ProtectStructure>
+  <ProtectWindows>False</ProtectWindows>
+ </ExcelWorkbook>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font ss:FontName="Aptos Narrow" x:Family="Swiss" ss:Size="11"
+    ss:Color="#000000"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Sheet1">
+  <Table ss:ExpandedColumnCount="15" ss:ExpandedRowCount="11" x:FullColumns="1"
+   x:FullRows="1" ss:DefaultColumnWidth="62.400000000000006"
+   ss:DefaultRowHeight="14.4">
+   <Column ss:Width="16.2"/>
+   <Column ss:Width="129"/>
+   <Column ss:Width="97.800000000000011"/>
+   <Column ss:Width="129"/>
+   <Column ss:Width="51"/>
+   <Column ss:Width="366.6"/>
+   <Column ss:Width="87"/>
+   <Column ss:Width="111.60000000000001"/>
+   <Column ss:Width="85.2"/>
+   <Column ss:Width="48.6"/>
+   <Column ss:Width="74.400000000000006"/>
+   <Column ss:Width="31.200000000000003"/>
+   <Column ss:Width="333"/>
+   <Column ss:Width="166.2" ss:Span="1"/>
+   <Row>
+    <Cell><Data ss:Type="String">id</Data></Cell>
+    <Cell><Data ss:Type="String">nombre</Data></Cell>
+    <Cell><Data ss:Type="String">categoria</Data></Cell>
+    <Cell><Data ss:Type="String">categoria_display</Data></Cell>
+    <Cell><Data ss:Type="String">gravedad</Data></Cell>
+    <Cell><Data ss:Type="String">descripcion</Data></Cell>
+    <Cell><Data ss:Type="String">requiere_denuncia</Data></Cell>
+    <Cell><Data ss:Type="String">plazo_investigacion_dias</Data></Cell>
+    <Cell><Data ss:Type="String">es_categoria_legal</Data></Cell>
+    <Cell><Data ss:Type="String">colegio_id</Data></Cell>
+    <Cell><Data ss:Type="String">colegio_nombre</Data></Cell>
+    <Cell><Data ss:Type="String">activo</Data></Cell>
+    <Cell><Data ss:Type="String">protocolo_especifico</Data></Cell>
+    <Cell><Data ss:Type="String">created_at</Data></Cell>
+    <Cell><Data ss:Type="String">updated_at</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">1</Data></Cell>
+    <Cell><Data ss:Type="String">Bullying Físico</Data></Cell>
+    <Cell><Data ss:Type="String">bullying</Data></Cell>
+    <Cell><Data ss:Type="String">Acoso Escolar/Bullying</Data></Cell>
+    <Cell><Data ss:Type="String">grave</Data></Cell>
+    <Cell><Data ss:Type="String">Agresión física repetitiva hacia un estudiante</Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String">10</Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T01:47:41.742835+00:00</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-10T13:38:41.042293+00:00</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">6</Data></Cell>
+    <Cell><Data ss:Type="String">Bullying/Acoso Escolar</Data></Cell>
+    <Cell><Data ss:Type="String">bullying</Data></Cell>
+    <Cell><Data ss:Type="String">Acoso Escolar/Bullying</Data></Cell>
+    <Cell><Data ss:Type="String">grave</Data></Cell>
+    <Cell><Data ss:Type="String">Conducta de persecución física o psicológica que realiza un estudiante contra otro.</Data></Cell>
+    <Cell><Data ss:Type="String">False</Data></Cell>
+    <Cell><Data ss:Type="String">5</Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String">Seguir protocolo de convivencia escolar establecido por el establecimiento.</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T20:24:18.632120+00:00</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T20:24:18.632164+00:00</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">7</Data></Cell>
+    <Cell><Data ss:Type="String">Violencia Física</Data></Cell>
+    <Cell><Data ss:Type="String">violencia_fisica</Data></Cell>
+    <Cell><Data ss:Type="String">Violencia Física</Data></Cell>
+    <Cell><Data ss:Type="String">muy_grave</Data></Cell>
+    <Cell><Data ss:Type="String">Agresión física que puede causar lesiones corporales.</Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String">3</Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String">Denuncia inmediata a Carabineros o PDI según gravedad de las lesiones.</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T20:24:18.638299+00:00</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T20:24:18.638325+00:00</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">8</Data></Cell>
+    <Cell><Data ss:Type="String">Violencia Psicológica</Data></Cell>
+    <Cell><Data ss:Type="String">violencia_psicologica</Data></Cell>
+    <Cell><Data ss:Type="String">Violencia Psicológica</Data></Cell>
+    <Cell><Data ss:Type="String">grave</Data></Cell>
+    <Cell><Data ss:Type="String">Hostigamiento verbal, intimidación, humillación, discriminación.</Data></Cell>
+    <Cell><Data ss:Type="String">False</Data></Cell>
+    <Cell><Data ss:Type="String">5</Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String">Evaluación psicológica y medidas de protección.</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T20:24:18.643477+00:00</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T20:24:18.643501+00:00</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">9</Data></Cell>
+    <Cell><Data ss:Type="String">Discriminación</Data></Cell>
+    <Cell><Data ss:Type="String">discriminacion</Data></Cell>
+    <Cell><Data ss:Type="String">Discriminación</Data></Cell>
+    <Cell><Data ss:Type="String">grave</Data></Cell>
+    <Cell><Data ss:Type="String">Distinción, exclusión o restricción por motivos de raza, sexo, religión, etc.</Data></Cell>
+    <Cell><Data ss:Type="String">False</Data></Cell>
+    <Cell><Data ss:Type="String">7</Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String">Activación de medidas formativas y reparatorias.</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T20:24:18.647122+00:00</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T20:24:18.647143+00:00</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">10</Data></Cell>
+    <Cell><Data ss:Type="String">Abuso Sexual</Data></Cell>
+    <Cell><Data ss:Type="String">abuso_sexual</Data></Cell>
+    <Cell><Data ss:Type="String">Abuso Sexual</Data></Cell>
+    <Cell><Data ss:Type="String">muy_grave</Data></Cell>
+    <Cell><Data ss:Type="String">Contacto sexual no consensual o inapropiado.</Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String">1</Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String">Denuncia INMEDIATA a Fiscalía y protección de la víctima.</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T20:24:18.650395+00:00</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T20:24:18.650417+00:00</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">11</Data></Cell>
+    <Cell><Data ss:Type="String">Consumo de Drogas/Alcohol</Data></Cell>
+    <Cell><Data ss:Type="String">consumo_drogas</Data></Cell>
+    <Cell><Data ss:Type="String">Consumo de Drogas/Alcohol</Data></Cell>
+    <Cell><Data ss:Type="String">muy_grave</Data></Cell>
+    <Cell><Data ss:Type="String">Consumo, porte o tráfico de sustancias ilícitas o alcohol.</Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String">2</Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String">Denuncia a PDI y derivación a programa de rehabilitación.</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T20:24:18.653646+00:00</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T20:24:18.653666+00:00</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">12</Data></Cell>
+    <Cell><Data ss:Type="String">Porte de Armas</Data></Cell>
+    <Cell><Data ss:Type="String">porte_armas</Data></Cell>
+    <Cell><Data ss:Type="String">Porte de Armas</Data></Cell>
+    <Cell><Data ss:Type="String">muy_grave</Data></Cell>
+    <Cell><Data ss:Type="String">Ingreso o porte de armas de fuego, cortopunzantes o contundentes.</Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String">1</Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String">Denuncia INMEDIATA a Carabineros y decomiso del arma.</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T20:24:18.658941+00:00</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T20:24:18.658974+00:00</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">13</Data></Cell>
+    <Cell><Data ss:Type="String">Ciberacoso</Data></Cell>
+    <Cell><Data ss:Type="String">ciberacoso</Data></Cell>
+    <Cell><Data ss:Type="String">Ciberacoso</Data></Cell>
+    <Cell><Data ss:Type="String">grave</Data></Cell>
+    <Cell><Data ss:Type="String">Acoso a través de medios digitales, redes sociales o tecnológicos.</Data></Cell>
+    <Cell><Data ss:Type="String">False</Data></Cell>
+    <Cell><Data ss:Type="String">5</Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String">Preservación de evidencia digital y medidas de protección online.</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T20:24:18.662947+00:00</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-07T21:38:42.381547+00:00</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">14</Data></Cell>
+    <Cell><Data ss:Type="String">Castigo de Prueba</Data></Cell>
+    <Cell><Data ss:Type="String">violencia_fisica</Data></Cell>
+    <Cell><Data ss:Type="String">Violencia Física</Data></Cell>
+    <Cell><Data ss:Type="String">leve</Data></Cell>
+    <Cell><Data ss:Type="String">Llamar Director</Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String">5</Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="String">True</Data></Cell>
+    <Cell><Data ss:Type="String">Activar protocolo contencion</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-08T01:05:04.553824+00:00</Data></Cell>
+    <Cell><Data ss:Type="String">2025-11-08T01:05:04.553853+00:00</Data></Cell>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <Selected/>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveRow>15</ActiveRow>
+     <ActiveCol>3</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
+</Workbook>

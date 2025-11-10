@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Colegio } from '../../services/api';
 import { useColegio } from '../../context/ColegioContext';
+import SelectorColegioActivo from '../common/SelectorColegioActivo';
 import {
   Box,
   Paper,
@@ -131,6 +131,7 @@ export const ReportarIncidente: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [mostrarSelectorColegio, setMostrarSelectorColegio] = useState(false);
 
   // Estados para datos del servidor
   const [tiposIncidente, setTiposIncidente] = useState<TipoIncidente[]>([]);
@@ -938,13 +939,24 @@ export const ReportarIncidente: React.FC = () => {
             <Typography variant="h6" gutterBottom>
               No hay colegio activo seleccionado
             </Typography>
-            <Typography variant="body2">
-              Para poder reportar un incidente, necesitas tener un colegio activo seleccionado. 
-              {user?.role === 'admin' || user?.role === 'sostenedor' 
-                ? ' Puedes seleccionar un colegio usando el selector en el encabezado de la página.'
-                : ' Contacta al administrador para que te asigne a un colegio.'
-              }
+            <Typography variant="body2" sx={{ mb: 2 }}>
+              Para poder reportar un incidente, necesitas tener un colegio activo seleccionado.
             </Typography>
+            {(user?.role === 'admin' || user?.role === 'sostenedor') && (
+              <Button
+                variant="contained"
+                size="small"
+                onClick={() => setMostrarSelectorColegio(true)}
+                sx={{ mt: 1 }}
+              >
+                Seleccionar Colegio
+              </Button>
+            )}
+            {user?.role !== 'admin' && user?.role !== 'sostenedor' && (
+              <Typography variant="body2" color="text.secondary">
+                Contacta al administrador para que te asigne a un colegio.
+              </Typography>
+            )}
           </Alert>
         )}
         
@@ -990,6 +1002,12 @@ export const ReportarIncidente: React.FC = () => {
           </Box>
         )}
       </Paper>
+
+      {/* Selector de Colegio */}
+      <SelectorColegioActivo 
+        open={mostrarSelectorColegio} 
+        onClose={() => setMostrarSelectorColegio(false)}
+      />
     </LocalizationProvider>
   );
 };
